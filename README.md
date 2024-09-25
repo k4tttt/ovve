@@ -16,18 +16,12 @@ An idea that might work is that a user can mark certain patches as "tradeable" (
 
 We want to create a web-application that focuses on student overalls and the patches that are sewed onto them.
 
-The web-app will be designed to keep track of the progress of the overalls as they go from brand new to well worn. The core functionality of the website will be to keep track of your very own overalls. It will offer lots of statistics and the users can see how their overalls has transformed over time thanks to temporality in the connected database. A student can also own patches that are not yet sewed onto the overalls. And again by utilizing temporality the user can see what patches they had in their collection over time. The website should also make it possible for users to interact with each other and see other overalls, toplists regarding amount of patches, and make friends.
+The web-app will be designed to keep track of the progress of the overalls as they go from brand new to well worn. The core functionality of the website will be to keep track of your very own overalls. It will offer lots of statistics and the users can see how their overalls has transformed over time thanks to temporality in the connected database. A student can also own patches that are not yet sewed onto the overalls. And again by utilizing temporality the user can see what patches they had in their collection over time. Overalls can have modifications, such as exchanged parts with other overall owners, installed LED-strips or zippers, or accessories attached. People and organizations can add existing patches to the database. The website should also make it possible for users to interact with each other and see other overalls, toplists regarding amount of patches, and make friends.
 
 The database will store information about:
-patches (such as name, creator, type), users (name, university, name on overalls, color of overalls, buy date of overalls), overalls-modifications (type, name, placement) and connections between users and their patches and modifications
-connection between user and patches; buy date, sew date (multiple if patch was relocated), price, bought from, state (sewn or not).
+patches (name, creator, type), users (name, university, color of overalls, buy date of overalls), overalls-modifications (name, category, placement) and connections between users and their patches (buy-date, sew-date, price, bought from who) and modifications.
 
-The database will be structured as following:
-Users that contain information about both the person, such as name, university and program, and the overalls, such as color and buy-date.
-
-Overalls can have modifications, such as exchanged parts with other overall owners, installed LED-strips or zippers, or accessories attached. 
-People and organizations can add existing patches to the database.
-
+#
 
 There will also be a large, searchable page where you can see all patches that exist. The patches will the categorized with some basic data such as shape, primary color and designer/seller. On this page you can simply browse patches, or go into a patch specific page to see more information about it, such as who owns it. You can also add a patch to the wishlist and as such be able to see people who own the patch and have it flagged for trading.
 
