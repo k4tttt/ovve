@@ -10,7 +10,7 @@ connection between user and patches; buy date, sew date (multiple if patch was r
 
 We have currently not planned any big computational functions, could you help us figure something out? The two project ideas already submited has such functionality, and it sounds like fun to challenge ourselves with such a task.
 
-An idea that might work is that a user can mark certain patches as "tradeable" (meaning they are okay with the idea of trading that patch for another one). Another user can then initiate a trade and offer a patch of their own to trade with. The first user can then agree or make a counter offer with another patch belonging to the second user. Such counter offers can go back and forth until either both agree or one user cancels the trade (sort of like monopoly mobile game if you've ever played it). A user might also be able to make a wishlist of patches that they want, that already exists in the database. Perhaps a trading page that recommends users that own tradeable patches on your wishlist, and even more so if you also own a tradeable patch on their wishlist.
+
 
 ###
 
@@ -21,11 +21,12 @@ The web-app will be designed to keep track of the progress of the overalls as th
 The database will store information about:
 patches (name, creator, type), users (name, university, color of overalls, buy date of overalls), overalls-modifications (name, category, placement) and connections between users and their patches (buy-date, sew-date, price, bought from who) and modifications.
 
+A user can mark certain patches as "tradeable" (meaning they are okay with the idea of trading that patch for another one). Another user can then initiate a trade and offer a patch of their own to trade with. The first user can then agree or make a counter offer with a different patch belonging to the second user. Such counter offers can go back and forth until either both agree or one user cancels the trade (sort of like monopoly mobile game if you've ever played it). A user might also be able to make a wishlist of patches that they want, that already exists in the database. Perhaps a trading page that recommends users that own tradeable patches on your wishlist, and even more so if you also own a tradeable patch on their wishlist.
+
+We plan on doing a wiki-like page where users can search/filter through patches and users, and see all colors of overalls at different universities.
 #
 
 There will also be a large, searchable page where you can see all patches that exist. The patches will the categorized with some basic data such as shape, primary color and designer/seller. On this page you can simply browse patches, or go into a patch specific page to see more information about it, such as who owns it. You can also add a patch to the wishlist and as such be able to see people who own the patch and have it flagged for trading.
-
-
 
 Lastly, there could potentially be a friends-function with a feed where you see friend activity, such as buying x amount of new patches, sewing y amount of new patches onto the overalls, or hitting a milestone such as 100 sewed on patches.
 
