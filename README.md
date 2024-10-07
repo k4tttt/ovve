@@ -12,6 +12,7 @@ A user can mark certain patches as "tradeable" (meaning they are okay with the i
 We plan on doing a wiki-like page where users can search/filter through patches and users, and see all colors of overalls at different universities.
 
 ## Project brainstorming
+### hejsan
 - people should have profiles with CRUD
 - namn, ovvenamn, beskriving, klass (id21), profilbild(er)
 - började plugga när, lärosäte, program,
