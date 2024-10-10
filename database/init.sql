@@ -83,5 +83,5 @@ CREATE TABLE patch_status (
     TST DATE,
     TET DATE,
     placement INTEGER REFERENCES placement_category(id),
-    patch INTEGER REFERENCES patch_inventory(id);
+    patch INTEGER REFERENCES patch_inventory(id)
 );
