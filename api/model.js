@@ -12,15 +12,16 @@ const pool = new Pool({
 const patchname = "Yoshi";
 const patchcreator = "Märkbar";
 
-const testConnection = async () => {
+const get_patches = async () => {
   try {
     const res = await pool.query('SELECT * FROM patch');
-    console.log('Connected to the database:');
-    console.log(res.rows);
+    return res;  // Return the result of the query
   } catch (err) {
     console.error('Error executing query', err);
+    throw err;  // Throw the error to be caught in the API handler
   }
 };
+
 module.exports = {
-  testConnection,
+  get_patches,
 };
