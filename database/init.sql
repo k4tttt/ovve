@@ -45,3 +45,19 @@ CREATE TABLE patch_inventory (
     obtained_from TEXT
 );
 
+CREATE TABLE mod_category (
+    id SERIAL PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE ovve_mod (
+    id SERIAL PRIMARY KEY,
+    title TEXT,
+    description TEXT,
+    category INTEGER REFERENCES mod_category(id),
+    profile_id INTEGER REFERENCES profile(id),
+    price INTEGER,
+    obtained_date DATE,
+    lost_date DATE,
+    obtained_from TEXT
+);
