@@ -1,12 +1,13 @@
-DROP TABLE IF EXISTS patch_inventory ;
+DROP TABLE IF EXISTS patch_status;
+DROP TABLE IF EXISTS patch_inventory;
 DROP TABLE IF EXISTS patch;
 DROP TABLE IF EXISTS patch_category;
 DROP TABLE IF EXISTS placement_category;
 DROP TABLE IF EXISTS ovve_mod;
 DROP TABLE IF EXISTS mod_category;
 DROP TABLE IF EXISTS profile;
-DROP TABLE IF EXISTS ovve_color;
 DROP TABLE IF EXISTS ovve_type;
+DROP TABLE IF EXISTS ovve_color;
 
 CREATE TABLE ovve_color (
     id SERIAL PRIMARY KEY,
@@ -33,28 +34,6 @@ CREATE TABLE profile (
     type INTEGER REFERENCES ovve_type(id)
 );
 
-CREATE TABLE patch_category (
-    id SERIAL PRIMARY KEY,
-    name TEXT
-);
-
-CREATE TABLE patch (
-    id SERIAL PRIMARY KEY,
-    name TEXT,
-    creator TEXT,
-    category INTEGER REFERENCES patch_category(id)
-);
-
-CREATE TABLE patch_inventory (
-    id SERIAL PRIMARY KEY,
-    patch_id INTEGER REFERENCES patch(id),
-    profile_id INTEGER REFERENCES profile(id),
-    price INTEGER,
-    obtained_date DATE,
-    lost_date DATE,
-    obtained_from TEXT
-);
-
 CREATE TABLE mod_category (
     id SERIAL PRIMARY KEY,
     name TEXT
@@ -77,9 +56,32 @@ CREATE TABLE placement_category (
     name TEXT
 );
 
+CREATE TABLE patch_category (
+    id SERIAL PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE patch (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    creator TEXT,
+    category INTEGER REFERENCES patch_category(id)
+);
+
+CREATE TABLE patch_inventory (
+    id SERIAL PRIMARY KEY,
+    patch_id INTEGER REFERENCES patch(id),
+    profile_id INTEGER REFERENCES profile(id),
+    price INTEGER,
+    obtained_date DATE,
+    lost_date DATE,
+    obtained_from TEXT
+);
+
 CREATE TABLE patch_status (
     id SERIAL PRIMARY KEY,
     TST DATE,
     TET DATE,
-    placement INTEGER REFERENCES placement_category(id)
+    placement INTEGER REFERENCES placement_category(id),
+    patch INTEGER REFERENCES patch_inventory(id);
 );
