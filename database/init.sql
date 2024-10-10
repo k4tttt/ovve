@@ -1,8 +1,12 @@
-DROP TABLE patch_inventory;
-DROP TABLE patch;
-DROP TABLE profile;
-DROP TABLE ovve_color;
-DROP TABLE patch_category;
+DROP TABLE IF EXISTS patch_inventory ;
+DROP TABLE IF EXISTS patch;
+DROP TABLE IF EXISTS patch_category;
+DROP TABLE IF EXISTS placement_category;
+DROP TABLE IF EXISTS ovve_mod;
+DROP TABLE IF EXISTS mod_category;
+DROP TABLE IF EXISTS profile;
+DROP TABLE IF EXISTS ovve_color;
+DROP TABLE IF EXISTS ovve_type;
 
 CREATE TABLE ovve_color (
     id SERIAL PRIMARY KEY,
@@ -10,6 +14,11 @@ CREATE TABLE ovve_color (
     determinator TEXT,
     color_name TEXT,
     color_hex VARCHAR(6)
+);
+
+CREATE TABLE ovve_type (
+    id SERIAL PRIMARY KEY,
+    name TEXT
 );
 
 CREATE TABLE profile (
@@ -20,7 +29,8 @@ CREATE TABLE profile (
     purchase_date DATE,
     inauguration_date DATE,
     biography TEXT,
-    color INTEGER REFERENCES ovve_color(id)
+    color INTEGER REFERENCES ovve_color(id),
+    type INTEGER REFERENCES ovve_type(id)
 );
 
 CREATE TABLE patch_category (
@@ -60,4 +70,16 @@ CREATE TABLE ovve_mod (
     obtained_date DATE,
     lost_date DATE,
     obtained_from TEXT
+);
+
+CREATE TABLE placement_category (
+    id SERIAL PRIMARY KEY,
+    name TEXT
+);
+
+CREATE TABLE patch_status (
+    id SERIAL PRIMARY KEY,
+    TST DATE,
+    TET DATE,
+    placement INTEGER REFERENCES placement_category(id)
 );
