@@ -30,6 +30,24 @@ app.get('/test-connection', async (req, res) => {
   }
 });
 
+app.get('/get_profile', async (req, res) => {
+  try {
+    const username = req.query.username;  // Extract username from query parameters
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const result = await ovve_model.get_profile_by_username(username);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });
