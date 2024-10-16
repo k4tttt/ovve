@@ -26,13 +26,14 @@ CREATE TABLE profile (
     id SERIAL PRIMARY KEY,
     username TEXT,
     password TEXT,
+    salt TEXT,
+    email TEXT,
     ovve_name TEXT,
     purchase_date DATE,
     inauguration_date DATE,
     biography TEXT,
     color INTEGER REFERENCES ovve_color(id),
     type INTEGER REFERENCES ovve_type(id),
-    email TEXT,
     CONSTRAINT email_format_check CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 );
 
