@@ -1,0 +1,1 @@
+SELECT check_username_uniqueness('Erik');
