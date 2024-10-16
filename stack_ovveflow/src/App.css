@@ -1,5 +1,42 @@
 html, body {
   margin: 0;
   background-color: #fff;
-  margin: 0 1vw;
+  margin: 0 2vw;
+}
+
+h2 {
+  margin: 12px 0;
+}
+
+.small_text {
+  font-size: 12px;
+  margin: 0;
+}
+
+#profile {
+  margin-top: 30px;
+}
+
+.profile_details {
+  display: flex;
+}
+
+.profile_details h2 {
+  margin-top: 0;
+}
+
+.profile_picture {
+  background-color: #ddd;
+  border-radius: 50%;
+  width: 160px;
+  height: 160px;
+  margin-right: 2vw;
+}
+
+.detail_with_label {
+  margin-right: 24px;
+}
+
+.biography p {
+  margin: 4px 0;
 }
