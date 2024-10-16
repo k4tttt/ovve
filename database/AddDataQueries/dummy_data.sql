@@ -31,3 +31,32 @@ VALUES
 
 
 SELECT * FROM ovve_color;
+
+INSERT INTO ovve_type (name)
+VALUES
+('Overall'),
+('Hängselbyxor'),
+('Frack'),
+('Labbrock');
+
+SELECT * FROM ovve_type;
+
+INSERT INTO patch_category (name)
+VALUES
+('Broderat'),
+('Vävt'),
+('Tryckt'),
+('DIY');
+
+SELECT * FROM patch_category;
+
+INSERT INTO mod_category (name)
+VALUES
+('Byte av del'),
+('Dragkedja'),
+('Splittad ovve'),
+('Ljusslinga'),
+('Accessoar');
+
+SELECT * FROM mod_category;
+
