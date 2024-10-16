@@ -11,6 +11,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER username_uniqueness_trigger
-BEFORE UPDATE ON profile
+BEFORE UPDATE OR INSERT ON profile
 FOR EACH ROW
 EXECUTE FUNCTION check_username_uniqueness();
