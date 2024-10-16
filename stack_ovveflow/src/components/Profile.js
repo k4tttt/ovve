@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Button from '@mui/material/Button';
+import Slider from '@mui/material/Slider';
 
 const Profile = () => {
   const { username } = useParams();
@@ -88,18 +88,24 @@ const Profile = () => {
         </div>
 
         <hr />
-      </div> : <></>}
 
-      <Button variant="contained">Hello</Button>
-      {/* {user_data ? (
-        <ul>
-          {user_data.map((item, index) => (
-            <li key={index}>{item.username} - {item.creator}</li>
-          ))}
-        </ul>
-      ) : (
-        <p>Loading...</p>
-      )} */}
+        <h3>Ovve-tidslinje</h3>
+        <div className='ovve_timeline'>
+          <Slider
+            min={new Date(user_data.purchase_date).getTime()}
+            max={new Date().getTime()}
+            defaultValue={new Date().getTime()}
+            aria-label="Default"
+            valueLabelDisplay="auto"
+            valueLabelFormat={(value) => new Date(value).toLocaleDateString()}
+            track={false}
+            marks={[
+              { value: new Date(user_data.purchase_date).getTime(), label: new Date(user_data.purchase_date).toLocaleDateString() },
+              { value: new Date().getTime(), label: `${new Date().toLocaleDateString()}` }
+            ]}
+          />
+        </div>
+      </div> : <></>}
     </>
   );
 }
