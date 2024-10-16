@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import Button from '@mui/material/Button';
+
 const Profile = () => {
   const {username} = useParams();
   const [user_data, set_user_data] = useState(null);
@@ -18,19 +20,18 @@ const Profile = () => {
         set_user_data(data.result);
       })
       .catch((error) => {
-        setError(error.message);
+        console.log("ERROR when fetching profile: " + error);
       });
   }, []);
 
   return (
     <div className="">
       <h1>Profile</h1>
-      {error ? (
-        <p>Error: {error}</p>
-      ) : user_data ? (
+      <Button variant="contained">Hello</Button>
+      {user_data ? (
         <ul>
           {user_data.map((item, index) => (
-            <li key={index}>{item.name} - {item.creator}</li>
+            <li key={index}>{item.username} - {item.creator}</li>
           ))}
         </ul>
       ) : (

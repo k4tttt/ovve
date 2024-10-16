@@ -9,9 +9,6 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
-const patchname = "Yoshi";
-const patchcreator = "Märkbar";
-
 const get_patches = async () => {
   try {
     const res = await pool.query('SELECT * FROM patch');
