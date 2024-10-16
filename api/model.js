@@ -29,6 +29,39 @@ const get_profile_by_username = async (username) => {
   }
 };
 
+const create_user = async (userData) => {
+  const {
+    username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email
+  } = userData;
+
+  try {
+    // Insert user into the profile table
+    const res = await pool.query(
+      `INSERT INTO profile (username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      RETURNING id;`,
+      [username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email]
+    );
+
+    return res.rows[0]; 
+  } catch (err) {
+    console.error('Error inserting profile:', err);
+
+    // Error due to email format constraint
+    if (err.message.includes('email_format_check')) {
+      throw new Error('Invalid email format'); 
+    }
+
+    // Error due to username uniqueness trigger
+    if (err.message.includes('Username')) {
+      throw new Error('Username already exists');
+    }
+
+    // Re-throw for all other errors
+    throw err;
+  }
+};
+
 module.exports = {
   get_patches,
   get_profile_by_username,
