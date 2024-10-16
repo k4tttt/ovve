@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
+import Login from './components/Login';
+import Profile from './components/Profile';
 
 function App() {
   const [data, setData] = useState(null);
@@ -23,8 +28,22 @@ function App() {
 
   return (
     <div className="App">
-      <h1>API Data:</h1>
-      {error ? (
+      <HelmetProvider>
+        <Helmet>
+          <title>Stack OvveFlow</title>
+          <meta charSet="UTF-8" />
+          {/* <meta name="author" content="Tyra Wodén" /> */}
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </Helmet>
+      </HelmetProvider>
+
+      <Router basename='/'>
+        <Routes>
+          <Route exact path="/" element={<Login />} />
+          <Route path="/profile/:username" element={<Profile />} />
+        </Routes>
+      </Router>
+      {/* {error ? (
         <p>Error: {error}</p>
       ) : data ? (
         <ul>
@@ -34,7 +53,7 @@ function App() {
         </ul>
       ) : (
         <p>Loading...</p>
-      )}
+      )} */}
     </div>
   );
 }

@@ -26,7 +26,6 @@ CREATE TABLE profile (
     id SERIAL PRIMARY KEY,
     username TEXT,
     password TEXT,
-    salt TEXT,
     email TEXT,
     ovve_name TEXT,
     purchase_date DATE,

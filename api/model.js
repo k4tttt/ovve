@@ -22,6 +22,17 @@ const get_patches = async () => {
   }
 };
 
+const get_profile_by_username = async (username) => {
+  try {
+    const res = await pool.query('SELECT * FROM profile WHERE username = $1;', [username]);
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 module.exports = {
   get_patches,
+  get_profile_by_username,
 };
