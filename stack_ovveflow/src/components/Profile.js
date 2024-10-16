@@ -47,11 +47,11 @@ const Profile = () => {
 
           <div style={{display: 'flex', marginBottom: '16px'}}>
             <div className='detail_with_label'>
-              <p className='small_text'>Fick ovve</p>
+              <p className='small_text'>Fick ovven</p>
               <div className='date_tag'>{formatDate(user_data.purchase_date)}</div>
             </div>
             <div className='detail_with_label'>
-              <p className='small_text'>Invigde ovve</p>
+              <p className='small_text'>Invigde ovven</p>
               <div className='date_tag'>{formatDate(user_data.inauguration_date)}</div>
             </div>
           </div>
