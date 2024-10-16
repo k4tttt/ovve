@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Slider from '@mui/material/Slider';
+import TimelineSlider from './TimelineSlider';
 
 const Profile = () => {
   const { username } = useParams();
   const [user_data, set_user_data] = useState(null);
+  const [slider_value, set_slider_value] = useState(new Date().getTime());
+  const [current_time, set_current_time] = useState(new Date().getTime());
 
   useEffect(() => {
     fetch(`http://localhost:3001/get_profile?username=${username}`)
@@ -89,18 +91,21 @@ const Profile = () => {
 
         <hr />
 
-        <h3>Ovve-tidslinje</h3>
+        <h3>Tidslinje över {user_data.username}'s ovve</h3>
         <div className='ovve_timeline'>
-          <Slider
+          <TimelineSlider
             min={new Date(user_data.purchase_date).getTime()}
             max={new Date().getTime()}
-            defaultValue={new Date().getTime()}
+            value={slider_value}
+            onChange={(e) => set_slider_value(e.target.value)}
+            onChangeCommitted={() => { set_current_time(slider_value) }}
             aria-label="Default"
             valueLabelDisplay="auto"
             valueLabelFormat={(value) => new Date(value).toLocaleDateString()}
             track={false}
             marks={[
               { value: new Date(user_data.purchase_date).getTime(), label: new Date(user_data.purchase_date).toLocaleDateString() },
+              { value: new Date(user_data.inauguration_date).getTime(), label: `` },
               { value: new Date().getTime(), label: `${new Date().toLocaleDateString()}` }
             ]}
           />
