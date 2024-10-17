@@ -49,6 +49,16 @@ const get_profile_by_username = async (username) => {
   }
 };
 
+const get_password_by_username = async (username) => {
+  try {
+    const res = await pool.query('SELECT password FROM profile WHERE username = $1;', [username]);
+    return res.rows[0]; 
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 const create_user = async (userData) => {
   const {
     username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email
@@ -143,6 +153,7 @@ module.exports = {
   get_profile_by_username,
   get_university,
   get_determinator,
+  get_password_by_username,
   create_user,
   create_inventory,
   create_status,

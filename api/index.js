@@ -119,6 +119,60 @@ app.get('/get-profile', async (req, res) => {
 
 /**
  * @swagger
+ * /get-password:
+ *   get:
+ *     summary: Retrieve a password by username
+ *     parameters:
+ *       - in: query
+ *         name: username
+ *         required: true
+ *         description: The username of the profile to retrieve
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Password retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       username:
+ *                         type: string
+ *       400:
+ *         description: Bad request - Username is required
+ *       500:
+ *         description: Internal server error
+ */
+app.get('/get-password', async (req, res) => {
+  try {
+    const username = req.query.username;  // Extract username from query parameters
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
+    const result = await ovve_model.get_password_by_username(username);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
  * /get-universities:
  *   get:
  *     summary: Retrieve the list of all universities.
