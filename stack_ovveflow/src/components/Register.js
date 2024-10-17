@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import bcrypt from 'bcryptjs';
 
 const RegisterForm = () => {
@@ -15,6 +15,37 @@ const RegisterForm = () => {
     })
 
   const [message, setMessage] = useState('');
+  const [universities, setUniversities] = useState([]);
+  const [determinators, setDeterminators] = useState([]);
+  const [selectedUniversity, setSelectedUniversity] = useState('');
+
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/get-universities');
+        const data = await res.json();
+        setUniversities(data);
+      } catch (error) {
+        console.error('Error fetching universities:', error);
+      }
+    };
+    fetchUniversities();
+  }, []);
+
+  useEffect(() => {
+    if (selectedUniversity) {
+      const fetchDeterminators = async () => {
+        try {
+          const res = await fetch(`http://localhost:3001/get-determinators/${selectedUniversity}`);
+          const data = await res.json();
+          setDeterminators(data);
+        } catch (error) {
+          console.error('Error fetching determinators:', error);
+        }
+      };
+      fetchDeterminators();
+    }
+  }, [selectedUniversity]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,7 +64,7 @@ const RegisterForm = () => {
       const hashedPw = await bcrypt.hash(pw, salt);
       formData.password = hashedPw;
 
-      const response = await fetch('http://localhost:3001/create_user', {
+      const response = await fetch('http://localhost:3001/create-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -118,14 +149,40 @@ const RegisterForm = () => {
           />
         </div>
         <div>
-          <label>Color (required):</label>
-          <input
-            type="text"
+          <label>University (required):</label>
+          <select
+            name="university"
+            value={selectedUniversity}
+            onChange={(e) => {
+              setSelectedUniversity(e.target.value);
+              setFormData({ ...formData, color: '' });
+            }}
+            required
+          >
+            <option value="">Select a university</option>
+            {universities.length > 0 && universities.map((uni) => (
+              <option key={uni.university} value={uni.university}>
+                {uni.university}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label>Determinator (required):</label>
+          <select
             name="color"
-            value={formData.uname}
+            value={formData.color}
             onChange={(e) => handleChange(e)}
             required
-          />
+          >
+            <option value="">Select a determinator</option>
+            {determinators.length > 0 && determinators.map((det) => (
+              <option key={det.determinator} value={det.determinator}>
+                {det.determinator}
+              </option>
+            ))}
+          </select>
         </div>
         <div>
           <label>Purchase date (required):</label>
