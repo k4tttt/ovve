@@ -1,6 +1,5 @@
 import { useState } from 'react';
-
-const bcrypt = require('bcryptjs');
+import bcrypt from 'bcryptjs';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
