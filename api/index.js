@@ -310,6 +310,24 @@ app.post('/create-status', async (req, res) => {
   }
 });
 
+app.get('/get-sewn-patches-for-profile-by-date', async (req, res) => {
+  try {
+    const { user_id, date } = req.query;  // Extract user_id and date from query parameters
+    if (!user_id || !date) {
+      return res.status(400).json({ error: 'User ID and Date are required' });
+    }
+
+    const result = await ovve_model.get_sewn_patches_for_profile_by_date(user_id, date);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });
