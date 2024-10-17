@@ -117,18 +117,59 @@ app.get('/get_profile', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /create-user:
+ *   post:
+ *     summary: Create a new user
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               ovve_name:
+ *                 type: string
+ *               purchase_date:
+ *                 type: string
+ *                 format: date
+ *               inauguration_date:
+ *                 type: string
+ *                 format: date
+ *               biography:
+ *                 type: string
+ *               color:
+ *                 type: integer
+ *               type:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Invalid email format
+ *       409:
+ *         description: Username already in use
+ *       500:
+ *         description: Server error
+ */
 app.post('/create-user', async (req, res) => {
   try {
     const { username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email } = req.body;
 
-    // Call the model to insert the new user
     const result = await ovve_model.create_user({
       username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email
     });
 
     res.status(201).json({
       message: 'User created successfully',
-      user: result.rows[0] // Return the inserted user
+      user: result.rows[0] //return the id
     });
   } catch (err) {
     // Handle known "Invalid email format" error
