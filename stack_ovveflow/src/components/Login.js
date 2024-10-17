@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { TextField, Button } from '@mui/material';
+import bcrypt from 'bcryptjs';
 
-const Login = () => {
+const Login = ({ handle_login }) => {
   const [user_name, set_user_name] = useState('');
   const [password, set_password] = useState('');
-  const [user_data, set_user_data] = useState(null);
 
   const handle_user_name = (event) => {
     set_user_name(event.target.value);
@@ -14,23 +14,31 @@ const Login = () => {
     set_password(event.target.value);
   };
 
-  const submit = (event) => {
-    console.log("user:", user_name, "password:", password);
+  const submit = async (event) => {
+    event.preventDefault();
 
-    fetch(`http://localhost:3001/get_profile?username=${user_name}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data.result[0]);
-        set_user_data(data.result[0]);
-      })
-      .catch((error) => {
-        console.log("ERROR when fetching profile: " + error);
-      });
+    try {
+      const response = await fetch(`http://localhost:3001/get-password?username=${user_name}`);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+
+      const is_password_valid = await bcrypt.compare(password, data.result.password);
+
+      console.log(is_password_valid);
+
+      if (is_password_valid) {
+        handle_login({hej: user_name});
+        console.log("Password is valid");
+      } else {
+        console.log("Password is invalid");
+      }
+    } catch (error) {
+      console.log("ERROR when fetching profile: " + error);
+    }
   };
 
   return (
@@ -39,14 +47,14 @@ const Login = () => {
       <TextField
         label="Användarnamn"
         sx={{ margin: '8px' }}
-        value={user_name} 
-        onChange={handle_user_name}/>
+        value={user_name}
+        onChange={handle_user_name} />
       <TextField
         label="Lösenord"
         type="password"
         sx={{ margin: '8px' }}
-        value={password} 
-        onChange={handle_password}/>
+        value={password}
+        onChange={handle_password} />
       <Button
         variant="contained"
         sx={{ margin: '8px', width: '10vw' }}
