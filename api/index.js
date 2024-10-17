@@ -195,6 +195,58 @@ app.post('/create-user', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /create-inventory:
+ *   post:
+ *     summary: Create a new inventory
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               patch_id:
+ *                 type: integer
+ *               profile_id:
+ *                 type: integer
+ *               price:
+ *                 type: integer
+ *               obtained_date:
+ *                 type: string
+ *                 format: date
+ *               lost_date:
+ *                 type: string
+ *                 format: date
+ *               obtained_from:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Inventory created successfully
+ *       500:
+ *         description: Server error
+ */
+app.post('/create-inventory', async (req, res) => {
+  try {
+    const { patch_id, profile_id, price, obtained_date, lost_date, obtained_from } = req.body;
+
+    const result = await ovve_model.create_inventory({
+      patch_id, profile_id, price, obtained_date, lost_date, obtained_from
+    });
+
+    res.status(201).json({
+      message: 'Inventory created successfully',
+      user: result //return the id
+    });
+  } catch (err) {
+    console.error('Error creating inventory:', err);
+    res.status(500).json({
+      error: 'An error occurred while creating the inventory',
+      details: err.message,
+    });
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });
