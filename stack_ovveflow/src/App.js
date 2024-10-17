@@ -1,12 +1,20 @@
 import './App.css';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { CookiesProvider, useCookies } from 'react-cookie';
 
 import Login from './components/Login';
 import Profile from './components/Profile';
 import Register from './components/Register';
+import Welcome from './components/Welcome';
 
 function App() {
+  const [cookies, set_cookie] = useCookies(['user'])
+
+  function handle_login(user) {
+    set_cookie('user', user, { path: '/' })
+  }
+
   return (
     <div className="App">
       <HelmetProvider>
@@ -18,13 +26,16 @@ function App() {
         </Helmet>
       </HelmetProvider>
 
-      <Router basename='/'>
-        <Routes>
-          <Route exact path="/" element={<Login />} />
-          <Route path="/profile/:username" element={<Profile />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </Router>
+      <CookiesProvider>
+        <Router basename='/'>
+          <Routes>
+            <Route exact path="/" element={<Login handle_login={handle_login} />} />
+            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/welcome" element={<Welcome user={cookies.user}/>} />
+          </Routes>
+        </Router>
+      </CookiesProvider>
     </div>
   );
 }
