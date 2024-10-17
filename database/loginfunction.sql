@@ -1,13 +1,14 @@
-DROP FUNCTION IF EXISTS get_password()
+DROP FUNCTION IF EXISTS get_password(TEXT);
+
 CREATE FUNCTION get_password(usern TEXT)
-RETURN TEXT AS $$
+RETURNS TEXT AS $$
 DECLARE
     passw TEXT;
 BEGIN
     SELECT password INTO passw
     FROM profile
     WHERE username = usern;
-    
+
     RETURN passw;
 END;
 $$ LANGUAGE plpgsql;

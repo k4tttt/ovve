@@ -66,7 +66,7 @@ const Profile = () => {
 
               <div className='biography'>
                 <p className='small_text'>Om mig</p>
-                <p>{user_data.biography}</p>
+                {user_data.biography}
               </div>
             </div>
           </div>
@@ -101,12 +101,13 @@ const Profile = () => {
             onChangeCommitted={() => { set_current_time(slider_value) }}
             aria-label="Default"
             valueLabelDisplay="auto"
-            valueLabelFormat={(value) => new Date(value).toLocaleDateString()}
+            valueLabelFormat={(value) => formatDate(value)}
             track={false}
+            color={user_data.color_hex}
             marks={[
-              { value: new Date(user_data.purchase_date).getTime(), label: new Date(user_data.purchase_date).toLocaleDateString() },
+              { value: new Date(user_data.purchase_date).getTime(), label: formatDate(user_data.purchase_date) },
               { value: new Date(user_data.inauguration_date).getTime(), label: `` },
-              { value: new Date().getTime(), label: `${new Date().toLocaleDateString()}` }
+              { value: new Date().getTime(), label: `${formatDate(new Date())}` }
             ]}
           />
         </div>
