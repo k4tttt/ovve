@@ -117,9 +117,111 @@ app.get('/get-profile', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /get-universities:
+ *   get:
+ *     summary: Retrieve the list of all universities.
+ *     description: Fetches all the universities from the ovve_color table in the database.
+ *     tags: [University]
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the list of universities.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       university:
+ *                         type: string
+ *                         example: University of Awesome
+ *       500:
+ *         description: Connection to the database failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Connection failed
+ *                 details:
+ *                   type: string
+ *                   example: Error message details
+ */
 app.get('/get-universities', async (req, res) => {
   try {
     const result = await ovve_model.get_university();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /get-determinators/{university}:
+ *   get:
+ *     summary: Retrieve determinators for a specific university.
+ *     description: Fetches all determinators for a given university from the ovve_color table in the database.
+ *     tags: [University]
+ *     parameters:
+ *       - in: path
+ *         name: university
+ *         required: true
+ *         description: The university for which to fetch the determinators.
+ *         schema:
+ *           type: string
+ *           example: University of Awesome
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the determinators for the specified university.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       determinator:
+ *                         type: string
+ *                         example: Blue and Gold
+ *       500:
+ *         description: Connection to the database failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Connection failed
+ *                 details:
+ *                   type: string
+ *                   example: Error message details
+ */
+app.get('/get-determinators/:university', async (req, res) => {
+  try {
+    const { university } = req.params;
+    const result = await ovve_model.get_determinator(university);
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query
