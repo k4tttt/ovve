@@ -38,43 +38,48 @@ const Profile = () => {
     return inputString.toUpperCase();
   };
 
+  const convertToLowerCase = (inputString) => {
+    return inputString.toLowerCase();
+  };
+
   console.log(user_data);
   return (
     <>
       {user_data ? <div id="profile">
         <div className='profile_details'>
+          <div className='profile_picture'></div>
           <div className='profile_info'>
-            <div className='profile_picture'></div>
             <div>
-              <div>
-                <p className='small_text'>Användarnamn</p>
-                <h2>{user_data.username}</h2>
-                <p className='small_text'>Namn på ovven</p>
-                <h2>{user_data.ovve_name}</h2>
-              </div>
+              <p className='small_text'>Användarnamn</p>
+              <h2>{user_data.username}</h2>
+              <p className='small_text'>Namn på {convertToLowerCase(user_data.ovve_type_name)}</p>
+              <h2>{user_data.ovve_name}</h2>
+            </div>
 
-              <div style={{ display: 'flex', marginBottom: '16px' }}>
-                <div className='detail_with_label'>
-                  <p className='small_text'>Fick ovven</p>
-                  <div className='date_tag'>{formatDate(user_data.purchase_date)}</div>
-                </div>
-                <div className='detail_with_label'>
-                  <p className='small_text'>Invigde ovven</p>
-                  <div className='date_tag'>{formatDate(user_data.inauguration_date)}</div>
-                </div>
+            <div style={{ display: 'flex', marginBottom: '16px' }}>
+              <div className='detail_with_label'>
+                <p className='small_text'>Fick {convertToLowerCase(user_data.ovve_type_name)}</p>
+                <div className='date_tag'>{formatDate(user_data.purchase_date)}</div>
               </div>
+              <div className='detail_with_label'>
+                <p className='small_text'>Invigde {convertToLowerCase(user_data.ovve_type_name)}</p>
+                <div className='date_tag'>{formatDate(user_data.inauguration_date)}</div>
+              </div>
+            </div>
 
-              <div className='biography'>
-                <p className='small_text'>Om mig</p>
-                {user_data.biography}
-              </div>
+            <div className='biography'>
+              <p className='small_text'>Om mig</p>
+              {user_data.biography}
             </div>
           </div>
 
           <div className='ovve_color' style={{ marginLeft: '6vw' }}>
-            <p className='ovve_color_text' style={{ color: `#${user_data.color_hex}` }}>
-              {convertToUpperCase(user_data.color_name)}
-            </p>
+            <div style={{position: 'relative'}}>
+              <p className='small_text' style={{position: 'absolute', top: '12px'}}>Min {convertToLowerCase(user_data.ovve_type_name)} är</p>
+              <p className='ovve_color_text' style={{ color: `#${user_data.color_hex}` }}>
+                {convertToUpperCase(user_data.color_name)}
+              </p>
+            </div>
 
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div className='detail_with_label'>
@@ -91,7 +96,7 @@ const Profile = () => {
 
         <hr />
 
-        <h3>Tidslinje över {user_data.username}'s ovve</h3>
+        <h3>Tidslinje över {user_data.username}'s {convertToLowerCase(user_data.ovve_type_name)}</h3>
         <div className='ovve_timeline'>
           <TimelineSlider
             min={new Date(user_data.purchase_date).getTime()}
