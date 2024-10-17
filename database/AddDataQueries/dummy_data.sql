@@ -142,6 +142,8 @@ VALUES
 ('Krage'),
 ('Rygg');
 
+SELECT * FROM placement_category;
+
 INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from)
 VALUES
 (19, 3, 0, '2024-05-14', '9999-12-31', 'Idag&Inatt'),
@@ -149,6 +151,8 @@ VALUES
 (30, 3, 20, '2022-10-05', '9999-12-31', 'NTK'),
 (57, 3, 20, '2022-11-10', '9999-12-31', 'Piraya'),
 (47, 3, 0, '2023-05-21', '9999-12-31', 'IndivID');
+
+SELECT * FROM patch_inventory;
 
 INSERT INTO patch_status (TST, TET, sewn_on, placement, patch)
 VALUES
@@ -161,3 +165,6 @@ VALUES
 ('2022-11-30', '9999-12-31', TRUE, 4, 4),
 ('2023-05-21', '2023-09-10', FALSE, 1, 5),
 ('2023-09-10', '9999-12-31', TRUE, 5, 5);
+
+SELECT * FROM patch_status;
+
