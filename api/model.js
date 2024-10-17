@@ -29,7 +29,7 @@ const get_university = async () => {
   }
 };
 
-const get_determinator = async () => {
+const get_determinator = async (university) => {
   try {
     const res = await pool.query('SELECT DISTINCT determinator FROM ovve_color WHERE university = $1 ORDER BY determinator ASC;');
     return res;  // Return the result of the query
