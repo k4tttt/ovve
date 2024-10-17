@@ -85,6 +85,7 @@ CREATE TABLE patch_status (
     id SERIAL PRIMARY KEY,
     TST DATE,
     TET DATE,
+    sewn_on BOOLEAN,
     placement INTEGER REFERENCES placement_category(id),
     patch INTEGER REFERENCES patch_inventory(id)
 );
@@ -109,3 +110,22 @@ JOIN
     ovve_color oc ON p.color = oc.id
 JOIN 
     ovve_type ot ON p.type = ot.id;
+
+DROP FUNCTION IF EXISTS check_username_uniqueness;
+
+
+
+CREATE FUNCTION check_username_uniqueness()
+RETURNS TRIGGER AS $$
+BEGIN
+	IF EXISTS (SELECT 1 FROM profile WHERE username = NEW.username AND id <> NEW.id) THEN
+		RAISE EXCEPTION 'Username "%s" is already in use.', NEW.username;
+	END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER username_uniqueness_trigger
+BEFORE UPDATE OR INSERT ON profile
+FOR EACH ROW
+EXECUTE FUNCTION check_username_uniqueness();

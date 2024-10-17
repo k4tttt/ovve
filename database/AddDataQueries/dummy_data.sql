@@ -128,6 +128,36 @@ INSERT INTO profile (username, password, ovve_name, purchase_date, inauguration_
 VALUES
     ('Erik', 'password', 'Erik', '2022-01-15', '2022-02-10', 'Loves adventure and exploration.', 11, 'id16esn@cs.umu.se', 1),
     ('Alva', 'password', 'Alva', '2023-03-12', '2023-04-05', 'Passionate about technology.', 11, 'id21ash@cs.umu.se', 1),
-    ('k4tt', 'password', 'TYRA', '2022-03-22', '2024-04-14', 'sliving my life. crunchy crunchy lorem ipsum mamma mia hundar börjar tala mat! idag ska jag äta ett äpple, very charli core of me, very newton core. är detta tillräckligt långt?', 11, 'id21twn@cs.umu.se', 1);
+    ('k4tt', 'password', 'TYRA', '2022-03-22', '2024-04-14', 'sliving my life. crunchy crunchy lorem ipsum mamma mia hundar börjar tala mat! idag ska jag äta ett äpple, very charli core of me, very newton core. är detta tillräckligt långt?', 11, 'id21twn@cs.umu.se', 1),
+    ('dataguy', 'password', '', '2023-03-12', '2023-04-05', 'DATA', 13, 'dv22dgy@cs.umu.se', 1);
 
-SELECT * FROM profile;
+INSERT INTO placement_category (name)
+VALUES
+('N/A'),
+('Höger arm'),
+('Vänster arm'),
+('Höger ben'),
+('Vänster ben'),
+('Bröstkorg'),
+('Krage'),
+('Rygg');
+
+INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from)
+VALUES
+(19, 3, 0, '2024-05-14', '9999-12-31', 'Idag&Inatt'),
+(20, 3, 20, '2022-03-10', '9999-12-31', 'IndivID'),
+(30, 3, 20, '2022-10-05', '9999-12-31', 'NTK'),
+(57, 3, 20, '2022-11-10', '9999-12-31', 'Piraya'),
+(47, 3, 0, '2023-05-21', '9999-12-31', 'IndivID');
+
+INSERT INTO patch_status (TST, TET, sewn_on, placement, patch)
+VALUES
+('2024-05-14', '2024-08-17', FALSE, 1, 1),
+('2024-08-17', '9999-12-31', TRUE, 4, 1),
+('2022-03-10', '9999-12-31', TRUE, 5, 2),
+('2022-10-05', '2022-10-15', FALSE, 1, 3),
+('2022-10-15', '9999-12-31', TRUE, 5, 3),
+('2022-11-10', '2022-11-30', FALSE, 1, 4),
+('2022-11-30', '9999-12-31', TRUE, 4, 4),
+('2023-05-21', '2023-09-10', FALSE, 1, 5),
+('2023-09-10', '9999-12-31', TRUE, 5, 5);
