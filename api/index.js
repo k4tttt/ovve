@@ -247,6 +247,56 @@ app.post('/create-inventory', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /create-status:
+ *   post:
+ *     summary: Create a new status
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               TST:
+ *                 type: string
+ *                 format: date
+ *               TET:
+ *                 type: string
+ *                 format: date
+ *               sewn_on:
+ *                 type: boolean
+ *               placement:
+ *                 type: integer
+ *               patch:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: Status created successfully
+ *       500:
+ *         description: Server error
+ */
+app.post('/create-status', async (req, res) => {
+  try {
+    const { TST, TET, sewn_on, placement, patch } = req.body;
+
+    const result = await ovve_model.create_status({
+      TST, TET, sewn_on, placement, patch
+    });
+
+    res.status(201).json({
+      message: 'Status created successfully',
+      user: result //return the id
+    });
+  } catch (err) {
+    console.error('Error creating status:', err);
+    res.status(500).json({
+      error: 'An error occurred while creating the status',
+      details: err.message,
+    });
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });
