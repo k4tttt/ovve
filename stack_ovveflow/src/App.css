@@ -14,6 +14,26 @@ hr {
   color: #ddd;
 }
 
+table {
+  background-color: #f3f3f3;
+  border-collapse: collapse;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+th {
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 2vw;
+  border-right: 1px solid #bcbcbc;
+}
+
+tr td, tr th {
+  border-bottom: 1px solid #bcbcbc;
+}
+
 .small_text {
   font-size: 12px;
   margin: 0;
@@ -21,6 +41,7 @@ hr {
 
 #profile {
   margin-top: 30px;
+  margin-bottom: 100px;
 }
 
 .profile_details {
@@ -62,7 +83,28 @@ hr {
 }
 
 .ovve_timeline {
-  padding: 0 4vw;
+  width: 75%;
+  padding-left: 80px;
+  /* padding-right: 30px; */
+  padding-top: 20px;
+  /* padding: 0 4vw; */
+}
+
+.timeline_overview td {
+  padding: 10px 20px;
+}
+
+.tag {
+  width: fit-content;
+  background-color: #cfd2ff;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.patch_table table {
+  width: 100%;
 }
 
 .login {
