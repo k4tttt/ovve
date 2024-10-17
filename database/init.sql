@@ -1,3 +1,5 @@
+DROP VIEW patch_sewn_view;
+DROP INDEX idx_profile;
 DROP VIEW IF EXISTS profile_view;
 DROP TABLE IF EXISTS patch_status;
 DROP TABLE IF EXISTS patch_inventory;
@@ -129,3 +131,27 @@ CREATE TRIGGER username_uniqueness_trigger
 BEFORE UPDATE OR INSERT ON profile
 FOR EACH ROW
 EXECUTE FUNCTION check_username_uniqueness();
+
+
+CREATE INDEX idx_profile ON profile(username);
+
+CREATE OR REPLACE VIEW patch_sewn_view AS
+SELECT
+  p.id AS patch_id,
+  p_i.profile_id,
+  p.name,
+  p.creator,
+  p_i.price,
+  p_i.obtained_from,
+  p_i.obtained_date,
+  p_i.lost_date,
+  p_c.name AS category,
+  p_s.TST,
+  p_s.TET,
+  p_s.placement
+FROM
+  patch_status p_s
+JOIN patch_inventory p_i ON p_s.id = p_i.id
+JOIN patch p ON p_i.patch_id = p.id
+JOIN patch_category p_c ON p.category = p_c.id
+WHERE p_s.sewn_on = TRUE;

@@ -31,7 +31,7 @@ const get_university = async () => {
 
 const get_determinator = async (university) => {
   try {
-    const res = await pool.query('SELECT DISTINCT determinator FROM ovve_color WHERE university = $1 ORDER BY determinator ASC;');
+    const res = await pool.query('SELECT DISTINCT determinator FROM ovve_color WHERE university = $1 ORDER BY determinator ASC;', [university]);
     return res;  // Return the result of the query
   } catch (err) {
     console.error('Error executing query', err);
@@ -126,10 +126,25 @@ const create_status = async (userData) => {
   }
 };
 
+const get_sewn_patches_for_profile_by_date = async (user_id, date) => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM patch_sewn_view WHERE profile_id = $1 AND $2 >= TST AND $2 < TET;', [user_id, date]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 module.exports = {
   get_patches,
   get_profile_by_username,
+  get_university,
+  get_determinator,
   create_user,
   create_inventory,
   create_status,
+  get_sewn_patches_for_profile_by_date,
 };

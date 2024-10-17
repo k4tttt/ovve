@@ -57,7 +57,7 @@ app.get('/test-connection', async (req, res) => {
 
 /**
  * @swagger
- * /get_profile:
+ * /get-profile:
  *   get:
  *     summary: Retrieve a user profile by username
  *     parameters:
@@ -99,7 +99,7 @@ app.get('/test-connection', async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-app.get('/get_profile', async (req, res) => {
+app.get('/get-profile', async (req, res) => {
   try {
     const username = req.query.username;  // Extract username from query parameters
     if (!username) {
@@ -107,6 +107,121 @@ app.get('/get_profile', async (req, res) => {
     }
 
     const result = await ovve_model.get_profile_by_username(username);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /get-universities:
+ *   get:
+ *     summary: Retrieve the list of all universities.
+ *     description: Fetches all the universities from the ovve_color table in the database.
+ *     tags: [University]
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the list of universities.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       university:
+ *                         type: string
+ *                         example: University of Awesome
+ *       500:
+ *         description: Connection to the database failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Connection failed
+ *                 details:
+ *                   type: string
+ *                   example: Error message details
+ */
+app.get('/get-universities', async (req, res) => {
+  try {
+    const result = await ovve_model.get_university();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /get-determinators/{university}:
+ *   get:
+ *     summary: Retrieve determinators for a specific university.
+ *     description: Fetches all determinators for a given university from the ovve_color table in the database.
+ *     tags: [University]
+ *     parameters:
+ *       - in: path
+ *         name: university
+ *         required: true
+ *         description: The university for which to fetch the determinators.
+ *         schema:
+ *           type: string
+ *           example: University of Awesome
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the determinators for the specified university.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       determinator:
+ *                         type: string
+ *                         example: Blue and Gold
+ *       500:
+ *         description: Connection to the database failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Connection failed
+ *                 details:
+ *                   type: string
+ *                   example: Error message details
+ */
+app.get('/get-determinators/:university', async (req, res) => {
+  try {
+    const { university } = req.params;
+    const result = await ovve_model.get_determinator(university);
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query
@@ -294,6 +409,24 @@ app.post('/create-status', async (req, res) => {
       error: 'An error occurred while creating the status',
       details: err.message,
     });
+  }
+});
+
+app.get('/get-sewn-patches-for-profile-by-date', async (req, res) => {
+  try {
+    const { user_id, date } = req.query;  // Extract user_id and date from query parameters
+    if (!user_id || !date) {
+      return res.status(400).json({ error: 'User ID and Date are required' });
+    }
+
+    const result = await ovve_model.get_sewn_patches_for_profile_by_date(user_id, date);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
   }
 });
 
