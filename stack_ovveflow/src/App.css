@@ -64,3 +64,13 @@ hr {
 .ovve_timeline {
   padding: 0 4vw;
 }
+
+.login {
+  display: flex;
+  flex-direction: column;
+  width: 30vw;
+}
+
+.input_field {
+  margin-bottom: 10px;
+}
