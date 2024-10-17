@@ -117,6 +117,19 @@ app.get('/get-profile', async (req, res) => {
   }
 });
 
+app.get('/get-universities', async (req, res) => {
+  try {
+    const result = await ovve_model.get_university();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 /**
  * @swagger
  * /create-user:
