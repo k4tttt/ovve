@@ -161,15 +161,19 @@ app.get('/get_profile', async (req, res) => {
  */
 app.post('/create-user', async (req, res) => {
   try {
+    console.log(req.body);
     const { username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email } = req.body;
 
     const result = await ovve_model.create_user({
       username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email
     });
 
+    console.log("result");
+    console.log(result);
+
     res.status(201).json({
       message: 'User created successfully',
-      user: result.rows[0] //return the id
+      user: result //return the id
     });
   } catch (err) {
     // Handle known "Invalid email format" error

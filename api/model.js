@@ -30,6 +30,7 @@ const get_profile_by_username = async (username) => {
 };
 
 const create_user = async (userData) => {
+  console.log(userData);
   const {
     username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email
   } = userData;
@@ -43,6 +44,7 @@ const create_user = async (userData) => {
       [username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email]
     );
 
+    console.log(res.rows[0]);
     return res.rows[0]; 
   } catch (err) {
     console.error('Error inserting profile:', err);
@@ -65,4 +67,5 @@ const create_user = async (userData) => {
 module.exports = {
   get_patches,
   get_profile_by_username,
+  create_user,
 };
