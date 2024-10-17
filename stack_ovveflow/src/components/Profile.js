@@ -10,7 +10,7 @@ const Profile = () => {
   const [current_time, set_current_time] = useState(new Date().getTime());
 
   useEffect(() => {
-    fetch(`http://localhost:3001/get_profile?username=${username}`)
+    fetch(`http://localhost:3001/get-profile?username=${username}`)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Network response was not ok');

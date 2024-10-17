@@ -57,7 +57,7 @@ app.get('/test-connection', async (req, res) => {
 
 /**
  * @swagger
- * /get_profile:
+ * /get-profile:
  *   get:
  *     summary: Retrieve a user profile by username
  *     parameters:
@@ -99,7 +99,7 @@ app.get('/test-connection', async (req, res) => {
  *       500:
  *         description: Internal server error
  */
-app.get('/get_profile', async (req, res) => {
+app.get('/get-profile', async (req, res) => {
   try {
     const username = req.query.username;  // Extract username from query parameters
     if (!username) {
