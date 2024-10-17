@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS profile_view;
 DROP TABLE IF EXISTS patch_status;
 DROP TABLE IF EXISTS patch_inventory;
 DROP TABLE IF EXISTS patch;
@@ -87,3 +88,24 @@ CREATE TABLE patch_status (
     placement INTEGER REFERENCES placement_category(id),
     patch INTEGER REFERENCES patch_inventory(id)
 );
+
+CREATE OR REPLACE VIEW profile_view AS
+SELECT 
+    p.id,
+    p.username,
+    p.email,
+    p.ovve_name,
+    p.purchase_date,
+    p.inauguration_date,
+    p.biography,
+    oc.university,
+    oc.determinator,
+    oc.color_name,
+    oc.color_hex,
+    ot.name AS ovve_type_name
+FROM 
+    profile p
+JOIN 
+    ovve_color oc ON p.color = oc.id
+JOIN 
+    ovve_type ot ON p.type = ot.id;
