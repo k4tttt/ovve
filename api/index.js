@@ -117,18 +117,59 @@ app.get('/get_profile', async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /create-user:
+ *   post:
+ *     summary: Create a new user
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               ovve_name:
+ *                 type: string
+ *               purchase_date:
+ *                 type: string
+ *                 format: date
+ *               inauguration_date:
+ *                 type: string
+ *                 format: date
+ *               biography:
+ *                 type: string
+ *               color:
+ *                 type: integer
+ *               type:
+ *                 type: integer
+ *     responses:
+ *       201:
+ *         description: User created successfully
+ *       400:
+ *         description: Invalid email format
+ *       409:
+ *         description: Username already in use
+ *       500:
+ *         description: Server error
+ */
 app.post('/create-user', async (req, res) => {
   try {
     const { username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email } = req.body;
 
-    // Call the model to insert the new user
     const result = await ovve_model.create_user({
       username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email
     });
 
     res.status(201).json({
       message: 'User created successfully',
-      user: result.rows[0] // Return the inserted user
+      user: result //return the id
     });
   } catch (err) {
     // Handle known "Invalid email format" error
@@ -149,6 +190,58 @@ app.post('/create-user', async (req, res) => {
     console.error('Error creating profile:', err);
     res.status(500).json({
       error: 'An error occurred while creating the profile',
+      details: err.message,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /create-inventory:
+ *   post:
+ *     summary: Create a new inventory
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               patch_id:
+ *                 type: integer
+ *               profile_id:
+ *                 type: integer
+ *               price:
+ *                 type: integer
+ *               obtained_date:
+ *                 type: string
+ *                 format: date
+ *               lost_date:
+ *                 type: string
+ *                 format: date
+ *               obtained_from:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Inventory created successfully
+ *       500:
+ *         description: Server error
+ */
+app.post('/create-inventory', async (req, res) => {
+  try {
+    const { patch_id, profile_id, price, obtained_date, lost_date, obtained_from } = req.body;
+
+    const result = await ovve_model.create_inventory({
+      patch_id, profile_id, price, obtained_date, lost_date, obtained_from
+    });
+
+    res.status(201).json({
+      message: 'Inventory created successfully',
+      user: result //return the id
+    });
+  } catch (err) {
+    console.error('Error creating inventory:', err);
+    res.status(500).json({
+      error: 'An error occurred while creating the inventory',
       details: err.message,
     });
   }
