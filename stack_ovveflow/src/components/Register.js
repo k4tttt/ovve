@@ -24,28 +24,28 @@ const RegisterForm = () => {
       try {
         const res = await fetch('http://localhost:3001/get-universities');
         const data = await res.json();
-        setUniversities(data);
+        setUniversities(data.result);  // Use 'result' field from the response
       } catch (error) {
         console.error('Error fetching universities:', error);
       }
     };
     fetchUniversities();
   }, []);
-
+  
   useEffect(() => {
     if (selectedUniversity) {
       const fetchDeterminators = async () => {
         try {
           const res = await fetch(`http://localhost:3001/get-determinators/${selectedUniversity}`);
           const data = await res.json();
-          setDeterminators(data);
+          setDeterminators(data.result);  // Use 'result' field from the response
         } catch (error) {
           console.error('Error fetching determinators:', error);
         }
       };
       fetchDeterminators();
     }
-  }, [selectedUniversity]);
+  }, [selectedUniversity]);  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
