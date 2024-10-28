@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Autocomplete, TextField, Checkbox, FormControlLabel, MenuItem } from '@mui/material';
+import { Autocomplete, Button, TextField, Checkbox, FormControlLabel, MenuItem } from '@mui/material';
 
-const AddPatch = ({ set_add_patch_view_active }) => {
+const AddPatch = ({ user, set_add_patch_view_active }) => {
   const [patches, set_patches] = useState([]);
   const [placement_categories, set_placement_categories] = useState([]);
   const [selected_patch, set_selected_patch] = useState(null);
@@ -9,7 +9,7 @@ const AddPatch = ({ set_add_patch_view_active }) => {
   const [checkbox, set_checkbox] = useState(false);
   const [inventory_data, set_inventory_data] = useState({
     patch_id: '',
-    profile_id: '',
+    profile_id: user.id,
     price: '',
     obtained_date: '',
     lost_date: '9999-12-31',
@@ -71,6 +71,42 @@ const AddPatch = ({ set_add_patch_view_active }) => {
     }));
   };
 
+  const handle_submit = async (e) => {
+    // 2: lägg till patchen i användarens inventory med angett obtained_date
+    // samt lost_date = 9999-12-31 (+ resterande data: patch_id, profile_id, price, obtained_from)
+    // 3: lägg till det nya inventory-idt i patch_status (patch).
+    // om sewn_on = false:
+    // sätt TST = obtained_date och TET = 9999-12-31 och sewn_on = false. 
+    // om sewn_on = true, kolla om obtained_date är samma som sy-datum. 
+    // om obtained_date = sy-datum: lägg till patchen i patch_status med 
+    // TST = obtained_date och TET = 9999-12-31 och sewn_on = true.
+    // om obtained_date < sy-datum: lägg till två separata entries i patch_status,
+    // ett där TST = obtained_date och TET = sy-datum och sewn_on = false, samt
+    // ett där TST = sy-datum och TET = 9999-12-31 och sewn_on = true
+    e.preventDefault();
+
+    try {
+      const request_body = {
+        ...inventory_data, lost_date: '9999-12-31',
+      };
+
+      console.log(request_body);
+      // const response = await fetch('http://localhost:3001/create-user', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(request_body)
+      // });
+
+      // if (response.ok) {
+      //   // navigate('/');
+      // }
+    } catch (error) {
+      console.log('An error occurred while connecting to the server.');
+    }
+  };
+
   return (
     <div>
       <div className='overlay' onClick={() => set_add_patch_view_active(false)}></div>
@@ -128,6 +164,7 @@ const AddPatch = ({ set_add_patch_view_active }) => {
           <TextField
             required
             label="Datum då märket införskaffades"
+            name='obtained_date'
             type="date"
             slotProps={{
               inputProps: { shrink: true }
@@ -139,6 +176,7 @@ const AddPatch = ({ set_add_patch_view_active }) => {
           <TextField
             required
             label="Införskaffat från"
+            name='obtained_from'
             slotProps={{
               inputProps: { shrink: true }
             }}
@@ -148,7 +186,9 @@ const AddPatch = ({ set_add_patch_view_active }) => {
           />
           <TextField
             required
+            type='number'
             label="Pris (kr)"
+            name='price'
             slotProps={{
               inputProps: { shrink: true }
             }}
@@ -163,13 +203,14 @@ const AddPatch = ({ set_add_patch_view_active }) => {
             <Checkbox checked={checkbox} onChange={() => set_checkbox(!checkbox)} />
           }
           label="Jag har sytt på märket"
-          sx={{ margin: '0px' }}
+          sx={{ margin: '0px', width: '100%' }}
         />
 
         {checkbox ? <div style={{ display: 'flex', flexDirection: 'column' }}>
           <TextField
             required
             label="Datum då märket syddes"
+            name='TST'
             type="date"
             slotProps={{
               inputProps: { shrink: true }
@@ -181,6 +222,7 @@ const AddPatch = ({ set_add_patch_view_active }) => {
           <TextField
             required
             select
+            name='placement'
             label="Placering av märket"
             value={patch_status_data.placement}
             onChange={handle_patch_status_change}
@@ -193,6 +235,8 @@ const AddPatch = ({ set_add_patch_view_active }) => {
             ))}
           </TextField>
         </div> : <></>}
+
+        <Button variant='contained' sx={{ margin: '8px' }} onClick={handle_submit}>Lägg till på min ovve</Button>
       </form>
     </div>
   );
