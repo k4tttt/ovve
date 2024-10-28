@@ -179,3 +179,58 @@ JOIN patch p ON p_i.patch_id = p.id
 JOIN patch_category p_c ON p.category = p_c.id
 JOIN placement_category ON p_s.placement = placement_category.id
 WHERE p_s.sewn_on = FALSE;
+
+
+CREATE FUNCTION status_update()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (NEW.sewn_on = true) THEN
+        -- Check for existing overlapping sewn-on entries
+        IF EXISTS (
+            SELECT 1 FROM patch_status s
+            WHERE (s.sewn_on = TRUE AND s.patch = NEW.patch AND s.TET >= NEW.TST AND s.TST < NEW.TET)
+            OR (s.sewn_on = TRUE AND s.patch = NEW.patch AND s.TET <= NEW.TET AND s.TET > NEW.TST)
+            OR (s.sewn_on = TRUE AND s.patch = NEW.patch AND s.TST <= NEW.TST AND s.TET >= NEW.TET)
+        ) THEN
+        	RAISE EXCEPTION 'Patch already sewn on during given timespan.';
+        END IF;
+
+        -- Delete unsewn status with same timespan
+        DELETE FROM patch_status s
+        WHERE s.sewn_on = FALSE AND s.patch = NEW.patch AND s.TST = NEW.TST AND s.TET = NEW.TET;
+
+        -- Update unsewn status that has same start
+        UPDATE patch_status s
+        SET s.TST = NEW.TET
+        WHERE s.sewn_on = FALSE AND s.patch = NEW.patch AND s.TST = NEW.TST;
+
+        -- Update unsewn status that has same end
+        UPDATE patch_status s
+        SET s.TET = NEW.TST
+        WHERE s.sewn_on = FALSE AND s.patch = NEW.patch AND s.TET = NEW.TET;
+    
+        -- Split unsewn status into two
+        IF EXISTS (
+            SELECT 1 FROM patch_status s
+            WHERE s.patch = NEW.patch AND s.sewn_on = FALSE AND s.TST < NEW.TST AND s.TET > NEW.TET
+        ) THEN
+            -- Insert a new status to the right of NEW
+            INSERT INTO patch_status (patch, sewn_on, TST, TET, placement)
+            SELECT s.patch, s.sewn_on, NEW.TET, s.TET, s.placement
+            FROM patch_status s
+            WHERE s.patch = NEW.patch AND s.sewn_on = FALSE AND s.TST < NEW.TST AND s.TET > NEW.TET;
+
+            -- Update the original row to be to the left of NEW
+            UPDATE patch_status s
+            SET s.TET = NEW.TST
+            WHERE s.patch = NEW.patch AND s.sewn_on = FALSE AND s.TST < NEW.TST AND s.TET > NEW.TET;
+        END IF;
+    END IF;
+	RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER status_trigger
+BEFORE UPDATE OR INSERT ON patch_status
+FOR EACH ROW
+EXECUTE FUNCTION status_update();
