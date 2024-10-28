@@ -27,7 +27,9 @@ VALUES
 ('Umeå Universitet', 'Socionom', 'Korall', 'FF9F8E'),
 ('Umeå Universitet', 'Beteendevetarsektionen', 'Maroon', 'AC1A41'),
 ('Umeå Universitet', 'Tandteknikerprogrammet', 'Blekrosa', 'FDC3ED'),
-('Umeå Universitet', 'Programmet i statistik och data science', 'Mörkgröna hängselbyxor', '005A09');
+('Umeå Universitet', 'Programmet i statistik och data science', 'Mörkgröna hängselbyxor', '005A09'),
+('Lunds Universitet', 'Brandingenjör', 'Svart', '191919'),
+('Lunds Universitet', 'Datateknik, Information- och Kommunikationsteknik', 'Rosa', 'FA7FDB');
 
 
 SELECT * FROM ovve_color;
