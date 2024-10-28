@@ -30,7 +30,7 @@ function App() {
         <Router basename='/'>
           <Routes>
             <Route exact path="/" element={<Login handle_login={handle_login} />} />
-            <Route path="/profile/:username" element={<Profile />} />
+            <Route path="/profile/:username" element={<Profile user={cookies.user}/>} />
             <Route path="/register" element={<Register />} />
             <Route path="/welcome" element={<Welcome user={cookies.user}/>} />
           </Routes>
