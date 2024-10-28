@@ -160,6 +160,20 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
   }
 };
 
+// när man insertar en ny patch på sin profil ska:
+// 1: om patchen inte finns, lägg till den i patch
+// 2: lägg till patchen i användarens inventory med angett obtained_date
+// samt lost_date = 9999-12-31 (+ resterande data: patch_id, profile_id, price, obtained_from)
+// 3: lägg till det nya inventory-idt i patch_status (patch).
+// om sewn_on = false:
+// sätt TST = obtained_date och TET = 9999-12-31 och sewn_on = false. 
+// om sewn_on = true, kolla om obtained_date är samma som sy-datum. 
+// om obtained_date = sy-datum: lägg till patchen i patch_status med 
+// TST = obtained_date och TET = 9999-12-31 och sewn_on = true.
+// om obtained_date < sy-datum: lägg till två separata entries i patch_status,
+// ett där TST = obtained_date och TET = sy-datum och sewn_on = false, samt
+// ett där TST = sy-datum och TET = 9999-12-31 och sewn_on = true
+
 module.exports = {
   get_patches,
   get_profile_by_username,

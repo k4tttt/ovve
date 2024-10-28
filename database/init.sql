@@ -1,3 +1,4 @@
+DROP VIEW patch_not_sewn_view;
 DROP VIEW patch_sewn_view;
 DROP INDEX idx_profile;
 DROP VIEW IF EXISTS profile_view;
@@ -148,12 +149,13 @@ SELECT
   p_c.name AS category,
   p_s.TST,
   p_s.TET,
-  p_s.placement
+  placement_category.name AS placement_category
 FROM
   patch_status p_s
 JOIN patch_inventory p_i ON p_s.patch = p_i.id
 JOIN patch p ON p_i.patch_id = p.id
 JOIN patch_category p_c ON p.category = p_c.id
+JOIN placement_category ON p_s.placement = placement_category.id
 WHERE p_s.sewn_on = TRUE;
 
 CREATE OR REPLACE VIEW patch_not_sewn_view AS
@@ -169,10 +171,11 @@ SELECT
   p_c.name AS category,
   p_s.TST,
   p_s.TET,
-  p_s.placement
+  placement_category.name AS placement_category
 FROM
   patch_status p_s
-LEFT JOIN patch_inventory p_i ON p_s.patch = p_i.id
-LEFT JOIN patch p ON p_i.patch_id = p.id
-LEFT JOIN patch_category p_c ON p.category = p_c.id
+JOIN patch_inventory p_i ON p_s.patch = p_i.id
+JOIN patch p ON p_i.patch_id = p.id
+JOIN patch_category p_c ON p.category = p_c.id
+JOIN placement_category ON p_s.placement = placement_category.id
 WHERE p_s.sewn_on = FALSE;

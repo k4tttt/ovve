@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { Button } from '@mui/material';
+
 import TimelineSlider from './TimelineSlider';
+import AddPatch from './AddPatch';
 
 const Profile = ({ user }) => {
   const { username } = useParams();
@@ -10,6 +13,7 @@ const Profile = ({ user }) => {
   const [user_not_sewn_patches, set_user_not_sewn_patches] = useState(null);
   const [slider_value, set_slider_value] = useState(new Date().getTime());
   const [current_time, set_current_time] = useState(new Date().getTime());
+  const [add_patch_view_active, set_add_patch_view_active] = useState(false);
 
   useEffect(() => {
     fetch(`http://localhost:3001/get-profile?username=${username}`)
@@ -86,6 +90,7 @@ const Profile = ({ user }) => {
   return (
     <>
       {user_data ? <div id="profile">
+        {add_patch_view_active ? <AddPatch set_add_patch_view_active={set_add_patch_view_active}/> : <></>}
         <div className='profile_details'>
           <div className='profile_picture'></div>
           <div className='profile_info'>
@@ -110,7 +115,7 @@ const Profile = ({ user }) => {
             <div className='biography'>
               <p className='small_text'>Om mig</p>
               {user_data.biography}
-              {user.username == username ? <>
+              {user.username === username ? <>
                 <p>Du är inloggad som detta konto</p>
               </> : <></>}
             </div>
@@ -139,8 +144,14 @@ const Profile = ({ user }) => {
 
         <hr />
 
-        {user_sewn_patches ? <div>
-          <h3>Tidslinje över {user_data.username}'s {convert_to_lower_case(user_data.ovve_type_name)}</h3>
+        {user_sewn_patches && user_not_sewn_patches ? <div>
+          <div className='title_with_tag'>
+            <h3 className='fit_content'>Tidslinje över {user_data.username}'s {convert_to_lower_case(user_data.ovve_type_name)}</h3>
+            {user.username === username ? <>
+              <p>Du är inloggad som detta konto</p>
+            </> : <></>}
+            <Button variant='contained' onClick={() => set_add_patch_view_active(true)}>Lägg till nytt märke</Button>
+          </div>
           <div className='tag'>{format_date(current_time)}</div>
           <div className='timeline_overview' style={{ display: 'flex', marginBottom: '30px' }}>
             <table>
@@ -161,7 +172,7 @@ const Profile = ({ user }) => {
                 </tr>
                 <tr>
                   <td>Totala märken</td>
-                  <td>0</td>
+                  <td>{user_sewn_patches.length + user_not_sewn_patches.length}</td>
                 </tr>
                 <tr>
                   <td>Mods</td>
@@ -191,7 +202,7 @@ const Profile = ({ user }) => {
           </div>
 
           <div className='patch_table'>
-            <h3>tabellliss</h3>
+            <h3>Sydda märken</h3>
             <table>
               <thead>
                 <tr>
@@ -199,6 +210,8 @@ const Profile = ({ user }) => {
                   <th>Skapare</th>
                   <th>Införskaffad</th>
                   <th>Införskaffad från</th>
+                  <th>Pris</th>
+                  <th>Placering</th>
                 </tr>
               </thead>
               <tbody>
@@ -208,6 +221,8 @@ const Profile = ({ user }) => {
                     <td>{patch.creator}</td>
                     <td>{format_date(patch.obtained_date)}</td>
                     <td>{patch.obtained_from}</td>
+                    <td>{patch.price} kr</td>
+                    <td>{patch.placement_category}</td>
                   </tr>
                 ))}
               </tbody>
