@@ -3,10 +3,11 @@ import { useParams } from 'react-router-dom';
 
 import TimelineSlider from './TimelineSlider';
 
-const Profile = () => {
+const Profile = ({ user }) => {
   const { username } = useParams();
   const [user_data, set_user_data] = useState(null);
   const [user_sewn_patches, set_user_sewn_patches] = useState(null);
+  const [user_not_sewn_patches, set_user_not_sewn_patches] = useState(null);
   const [slider_value, set_slider_value] = useState(new Date().getTime());
   const [current_time, set_current_time] = useState(new Date().getTime());
 
@@ -46,8 +47,26 @@ const Profile = () => {
     }
   }, [user_data, current_time]);
 
+  useEffect(() => {
+    if (user_data) {
+      fetch(`http://localhost:3001/get-not-sewn-patches-for-profile-by-date?user_id=${user_data.id}&date=${new Date(current_time).toLocaleDateString()}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          set_user_not_sewn_patches(data.result);
+          console.log(data.result);
+        })
+        .catch((error) => {
+          console.log("ERROR when fetching non-sewn patches: " + error);
+        });
+    }
+  }, [user_data, current_time]);
 
-  const formatDate = (dateString) => {
+  const format_date = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-GB', {
       day: 'numeric',
@@ -56,11 +75,11 @@ const Profile = () => {
     });
   };
 
-  const convertToUpperCase = (inputString) => {
+  const convert_to_upper_case = (inputString) => {
     return inputString.toUpperCase();
   };
 
-  const convertToLowerCase = (inputString) => {
+  const convert_to_lower_case = (inputString) => {
     return inputString.toLowerCase();
   };
 
@@ -73,32 +92,35 @@ const Profile = () => {
             <div>
               <p className='small_text'>Användarnamn</p>
               <h2>{user_data.username}</h2>
-              <p className='small_text'>Namn på {convertToLowerCase(user_data.ovve_type_name)}</p>
+              <p className='small_text'>Namn på {convert_to_lower_case(user_data.ovve_type_name)}</p>
               <h2>{user_data.ovve_name}</h2>
             </div>
 
             <div style={{ display: 'flex', marginBottom: '16px' }}>
               <div className='detail_with_label'>
-                <p className='small_text'>Fick {convertToLowerCase(user_data.ovve_type_name)}</p>
-                <div className='date_tag'>{formatDate(user_data.purchase_date)}</div>
+                <p className='small_text'>Fick {convert_to_lower_case(user_data.ovve_type_name)}</p>
+                <div className='date_tag'>{format_date(user_data.purchase_date)}</div>
               </div>
               <div className='detail_with_label'>
-                <p className='small_text'>Invigde {convertToLowerCase(user_data.ovve_type_name)}</p>
-                <div className='date_tag'>{formatDate(user_data.inauguration_date)}</div>
+                <p className='small_text'>Invigde {convert_to_lower_case(user_data.ovve_type_name)}</p>
+                <div className='date_tag'>{format_date(user_data.inauguration_date)}</div>
               </div>
             </div>
 
             <div className='biography'>
               <p className='small_text'>Om mig</p>
               {user_data.biography}
+              {user.username == username ? <>
+                <p>Du är inloggad som detta konto</p>
+              </> : <></>}
             </div>
           </div>
 
           <div className='ovve_color' style={{ marginLeft: '6vw' }}>
             <div style={{ position: 'relative' }}>
-              <p className='small_text' style={{ position: 'absolute', top: '12px' }}>Min {convertToLowerCase(user_data.ovve_type_name)} är</p>
+              <p className='small_text' style={{ position: 'absolute', top: '12px' }}>Min {convert_to_lower_case(user_data.ovve_type_name)} är</p>
               <p className='ovve_color_text' style={{ color: `#${user_data.color_hex}` }}>
-                {convertToUpperCase(user_data.color_name)}
+                {convert_to_upper_case(user_data.color_name)}
               </p>
             </div>
 
@@ -118,9 +140,9 @@ const Profile = () => {
         <hr />
 
         {user_sewn_patches ? <div>
-          <h3>Tidslinje över {user_data.username}'s {convertToLowerCase(user_data.ovve_type_name)}</h3>
-          <div className='tag'>{formatDate(current_time)}</div>
-          <div className='timeline_overview' style={{display: 'flex', marginBottom: '30px'}}>
+          <h3>Tidslinje över {user_data.username}'s {convert_to_lower_case(user_data.ovve_type_name)}</h3>
+          <div className='tag'>{format_date(current_time)}</div>
+          <div className='timeline_overview' style={{ display: 'flex', marginBottom: '30px' }}>
             <table>
               {/* <thead>
                 <tr>
@@ -135,7 +157,7 @@ const Profile = () => {
                 </tr>
                 <tr>
                   <td>Osydda märken</td>
-                  <td>0</td>
+                  <td>{user_not_sewn_patches.length}</td>
                 </tr>
                 <tr>
                   <td>Totala märken</td>
@@ -156,13 +178,13 @@ const Profile = () => {
                 onChangeCommitted={() => { set_current_time(slider_value) }}
                 aria-label="Default"
                 valueLabelDisplay="on"
-                valueLabelFormat={(value) => formatDate(value)}
+                valueLabelFormat={(value) => format_date(value)}
                 track={false}
                 color={user_data.color_hex}
                 marks={[
-                  { value: new Date(user_data.purchase_date).getTime(), label: formatDate(user_data.purchase_date) },
+                  { value: new Date(user_data.purchase_date).getTime(), label: format_date(user_data.purchase_date) },
                   { value: new Date(user_data.inauguration_date).getTime(), label: `` },
-                  { value: new Date().getTime(), label: `${formatDate(new Date())}` }
+                  { value: new Date().getTime(), label: `${format_date(new Date())}` }
                 ]}
               />
             </div>
@@ -184,7 +206,7 @@ const Profile = () => {
                   <tr key={index}>
                     <td>{patch.name}</td>
                     <td>{patch.creator}</td>
-                    <td>{formatDate(patch.obtained_date)}</td>
+                    <td>{format_date(patch.obtained_date)}</td>
                     <td>{patch.obtained_from}</td>
                   </tr>
                 ))}

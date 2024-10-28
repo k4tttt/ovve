@@ -151,7 +151,28 @@ SELECT
   p_s.placement
 FROM
   patch_status p_s
-JOIN patch_inventory p_i ON p_s.id = p_i.id
+JOIN patch_inventory p_i ON p_s.patch = p_i.id
 JOIN patch p ON p_i.patch_id = p.id
 JOIN patch_category p_c ON p.category = p_c.id
 WHERE p_s.sewn_on = TRUE;
+
+CREATE OR REPLACE VIEW patch_not_sewn_view AS
+SELECT
+  p.id AS patch_id,
+  p_i.profile_id,
+  p.name,
+  p.creator,
+  p_i.price,
+  p_i.obtained_from,
+  p_i.obtained_date,
+  p_i.lost_date,
+  p_c.name AS category,
+  p_s.TST,
+  p_s.TET,
+  p_s.placement
+FROM
+  patch_status p_s
+LEFT JOIN patch_inventory p_i ON p_s.patch = p_i.id
+LEFT JOIN patch p ON p_i.patch_id = p.id
+LEFT JOIN patch_category p_c ON p.category = p_c.id
+WHERE p_s.sewn_on = FALSE;

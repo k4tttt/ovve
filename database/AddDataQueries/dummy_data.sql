@@ -121,7 +121,7 @@ INSERT INTO patch (name, creator, category) VALUES
 ('överlevde mottagningen 21', 'NTK', 3),
 ('överlevde mottagningen 22', 'NTK', 1);
 
-SELECT patch.name as patch, patch.creator, patch_category.name as category FROM patch
+SELECT patch.id, patch.name as patch, patch.creator, patch_category.name as category FROM patch
 JOIN patch_category ON patch.category = patch_category.id;
 
 INSERT INTO profile (username, password, ovve_name, purchase_date, inauguration_date, biography, color, email, type)
@@ -152,7 +152,7 @@ VALUES
 (57, 3, 20, '2022-11-10', '9999-12-31', 'Piraya'),
 (47, 3, 0, '2023-05-21', '9999-12-31', 'IndivID');
 
-SELECT * FROM patch_inventory;
+SELECT * FROM patch_inventory JOIN patch ON patch.id = patch_inventory.patch_id;
 
 INSERT INTO patch_status (TST, TET, sewn_on, placement, patch)
 VALUES
@@ -166,5 +166,8 @@ VALUES
 ('2023-05-21', '2023-09-10', FALSE, 1, 5),
 ('2023-09-10', '9999-12-31', TRUE, 5, 5);
 
-SELECT * FROM patch_status;
+SELECT * FROM patch_status WHERE sewn_on = TRUE;
 
+SELECT * FROM patch_sewn_view;
+
+SELECT * FROM patch_not_sewn_view;
