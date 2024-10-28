@@ -19,7 +19,7 @@ const get_patches = async () => {
   }
 };
 
-const get_university = async () => {
+const get_universities = async () => {
   try {
     const res = await pool.query('SELECT DISTINCT university FROM ovve_color ORDER BY university ASC;');
     return res;  // Return the result of the query
@@ -29,9 +29,19 @@ const get_university = async () => {
   }
 };
 
-const get_determinator = async (university) => {
+const get_determinators = async (university) => {
   try {
-    const res = await pool.query('SELECT DISTINCT determinator FROM ovve_color WHERE university = $1 ORDER BY determinator ASC;', [university]);
+    const res = await pool.query('SELECT determinator, id FROM ovve_color WHERE university = $1 ORDER BY determinator ASC;', [university]);
+    return res;  // Return the result of the query
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;  // Throw the error to be caught in the API handler
+  }
+};
+
+const get_ovve_types = async () => {
+  try {
+    const res = await pool.query('SELECT name, id FROM ovve_type ORDER BY name ASC;');
     return res;  // Return the result of the query
   } catch (err) {
     console.error('Error executing query', err);
@@ -65,6 +75,11 @@ const create_user = async (userData) => {
   } = userData;
 
   try {
+
+    if (inauguration_date === '') {
+      inauguration_date = '9999-12-31';
+    }
+    
     // Insert user into the profile table
     const res = await pool.query(
       `INSERT INTO profile (username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email)
@@ -177,8 +192,9 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
 module.exports = {
   get_patches,
   get_profile_by_username,
-  get_university,
-  get_determinator,
+  get_universities,
+  get_determinators,
+  get_ovve_types,
   get_password_by_username,
   create_user,
   create_inventory,

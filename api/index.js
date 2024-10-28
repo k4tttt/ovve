@@ -196,7 +196,8 @@ app.get('/get-password', async (req, res) => {
  *                     properties:
  *                       university:
  *                         type: string
- *                         example: University of Awesome
+ *                       id:
+ *                         type: integer
  *       500:
  *         description: Connection to the database failed.
  *         content:
@@ -213,7 +214,60 @@ app.get('/get-password', async (req, res) => {
  */
 app.get('/get-universities', async (req, res) => {
   try {
-    const result = await ovve_model.get_university();
+    const result = await ovve_model.get_universities();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /get-ovve-types:
+ *   get:
+ *     summary: Retrieve the list of all types of ovves.
+ *     description: Fetches all the types from the ovve_type table in the database.
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the list of types.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       name:
+ *                         type: string
+ *                       id:
+ *                         type: integer
+ *       500:
+ *         description: Connection to the database failed.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Connection failed
+ *                 details:
+ *                   type: string
+ *                   example: Error message details
+ */
+app.get('/get-ovve-types', async (req, res) => {
+  try {
+    const result = await ovve_model.get_ovve_types();
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query
@@ -275,7 +329,7 @@ app.get('/get-universities', async (req, res) => {
 app.get('/get-determinators/:university', async (req, res) => {
   try {
     const { university } = req.params;
-    const result = await ovve_model.get_determinator(university);
+    const result = await ovve_model.get_determinators(university);
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query

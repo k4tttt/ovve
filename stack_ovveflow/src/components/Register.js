@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import bcrypt from 'bcryptjs';
+import { TextField, Button, MenuItem } from '@mui/material';
 
 const RegisterForm = () => {
-  const [formData, setFormData] = useState({
+  const [form_data, set_form_data] = useState({
     username: '',
     password: '',
     ovve_name: '',
@@ -13,88 +14,236 @@ const RegisterForm = () => {
     type: '',
     email: ''
     })
-
-  const [message, setMessage] = useState('');
-  const [universities, setUniversities] = useState([]);
-  const [determinators, setDeterminators] = useState([]);
-  const [selectedUniversity, setSelectedUniversity] = useState('');
+  const [message, set_message] = useState('');
+  const [universities, set_universities] = useState([]);
+  const [determinators, set_determinators] = useState([]);
+  const [ovve_types, set_ovve_types] = useState([]);
+  const [selected_university, set_selected_university] = useState('');
 
   useEffect(() => {
-    const fetchUniversities = async () => {
+    const fetch_universities = async () => {
       try {
         const res = await fetch('http://localhost:3001/get-universities');
         const data = await res.json();
-        setUniversities(data.result);  // Use 'result' field from the response
+        set_universities(data.result);  // Use 'result' field from the response
       } catch (error) {
         console.error('Error fetching universities:', error);
       }
     };
-    fetchUniversities();
+    fetch_universities();
+  }, []);
+
+  useEffect(() => {
+    const fetch_ovve_types = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/get-ovve-types');
+        const data = await res.json();
+        set_ovve_types(data.result);  // Use 'result' field from the response
+      } catch (error) {
+        console.error('Error fetching ovve_types:', error);
+      }
+    };
+    fetch_ovve_types();
   }, []);
   
   useEffect(() => {
-    if (selectedUniversity) {
-      const fetchDeterminators = async () => {
+    if (selected_university) {
+      const fetch_determinators = async () => {
         try {
-          const res = await fetch(`http://localhost:3001/get-determinators/${selectedUniversity}`);
+          const res = await fetch(`http://localhost:3001/get-determinators/${selected_university}`);
           const data = await res.json();
-          setDeterminators(data.result);  // Use 'result' field from the response
+          set_determinators(data.result);  // Use 'result' field from the response
         } catch (error) {
           console.error('Error fetching determinators:', error);
         }
       };
-      fetchDeterminators();
+      fetch_determinators();
+      set_form_data((prev_data) => ({
+        ...prev_data,
+        color: ''
+      }));    
+    } else {
+      set_determinators([]);
     }
-  }, [selectedUniversity]);  
+  }, [selected_university]);  
 
-  const handleChange = (e) => {
+  const handle_change = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    set_form_data((prev_data) => ({
+      ...prev_data,
       [name]: value
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handle_submit = async (e) => {
     e.preventDefault();
 
     try {
       const salt = await bcrypt.genSalt(10);
-      const pw = formData.password;
-      const hashedPw = await bcrypt.hash(pw, salt);
-      formData.password = hashedPw;
+      const hashed_pw = await bcrypt.hash(form_data.password, salt);
+      const request_body = {...form_data, password: hashed_pw};
 
+      console.log(request_body);
       const response = await fetch('http://localhost:3001/create-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(request_body)
       });
 
       if (response.ok) {
-        setMessage('Registration successful!');
+        set_message('Registration successful!');
       } else if (response.status === 409) {
-        setMessage('Username is already taken.');
+        set_message('Username is already taken.');
       } else {
-        setMessage('Registration failed. Please try again.');
+        set_message('Registration failed. Please try again.');
       }
     } catch (error) {
-      setMessage('An error occurred while connecting to the server.');
+      set_message('An error occurred while connecting to the server.');
     }
   };
 
   return (
     <div>
       <h2>Register</h2>
-      <form onSubmit={handleSubmit}>
+    
+      <form onSubmit={handle_submit} className="register-form" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '20px' }}>
+        <TextField
+          required
+          label="Användarnamn"
+          name="username"
+          value={form_data.username}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+        
+        <TextField
+          required
+          label="Lösenord"
+          name="password"
+          type='password'
+          value={form_data.password}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+
+        <TextField
+          label="Namn på ovven"
+          name="ovve_name"
+          value={form_data.ovve_name}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+
+        <TextField
+          label="Biografi"
+          name="biography"
+          multiline
+          rows={4}
+          value={form_data.biography}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+
+        <TextField
+          required
+          label="Email"
+          name="email"
+          type="email"
+          value={form_data.email}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+
+        <TextField
+          required
+          label="Datum då ovve inköptes"
+          name="purchase_date"
+          type="date"
+          slotProps={{
+            inputProps: { shrink: true }
+          }}
+          value={form_data.purchase_date}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+
+        <TextField
+          label="Datum då ovve invigdes"
+          name="inauguration_date"
+          type="date"
+          value={form_data.inauguration_date}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        />
+
+        <TextField
+          required
+          select
+          label="Universitet/Högskola"
+          name="university"
+          value={selected_university}
+          onChange={(e) => (set_selected_university(e.target.value))}
+          sx={{ margin: '8px', width: '300px' }}
+        >
+          {universities.map((uni) => (
+            <MenuItem key={uni.university} value={uni.university}>
+              {uni.university}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          required
+          select
+          label="Program/Sektion"
+          name="color"
+          value={form_data.color}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        >
+          {determinators.map((det) => (
+            <MenuItem key={det.determinator} value={det.id}>
+              {det.determinator}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          required
+          select
+          label="Typ av ovve"
+          name="type"
+          value={form_data.type}
+          onChange={handle_change}
+          sx={{ margin: '8px', width: '300px' }}
+        >
+          {ovve_types.map((type) => (
+            <MenuItem key={type.id} value={type.id}>
+              {type.name}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <Button
+          variant="contained"
+          type="submit"
+          sx={{ margin: '8px', width: '150px' }}
+        >
+          Skapa konto
+        </Button>
+      </form>
+   
+
+      <form onSubmit={handle_submit}>
         <div>
           <label>Username (required):</label>
           <input
             type="text"
             name="username"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
@@ -103,8 +252,8 @@ const RegisterForm = () => {
           <input
             type="password"
             name="password"
-            value={formData.passw}
-            onChange={handleChange}
+            value={form_data.passw}
+            onChange={handle_change}
             required
           />
         </div>
@@ -113,8 +262,8 @@ const RegisterForm = () => {
           <input
             type="text"
             name="email"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
@@ -123,8 +272,8 @@ const RegisterForm = () => {
           <input
             type="text"
             name="type"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
@@ -133,8 +282,8 @@ const RegisterForm = () => {
           <input
             type="text"
             name="ovve_name"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
@@ -143,8 +292,8 @@ const RegisterForm = () => {
           <input
             type="text"
             name="biography"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
@@ -152,10 +301,10 @@ const RegisterForm = () => {
           <label>University (required):</label>
           <select
             name="university"
-            value={selectedUniversity}
+            value={selected_university}
             onChange={(e) => {
-              setSelectedUniversity(e.target.value);
-              setFormData({ ...formData, color: '' });
+              set_selected_university(e.target.value);
+              set_form_data({ ...form_data, color: '' });
             }}
             required
           >
@@ -172,8 +321,8 @@ const RegisterForm = () => {
           <label>Determinator (required):</label>
           <select
             name="color"
-            value={formData.color}
-            onChange={(e) => handleChange(e)}
+            value={form_data.color}
+            onChange={(e) => handle_change(e)}
             required
           >
             <option value="">Select a determinator</option>
@@ -189,8 +338,8 @@ const RegisterForm = () => {
           <input
             type="date"
             name="purchase_date"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
@@ -199,13 +348,15 @@ const RegisterForm = () => {
           <input
             type="date"
             name="inauguration_date"
-            value={formData.uname}
-            onChange={(e) => handleChange(e)}
+            value={form_data.uname}
+            onChange={(e) => handle_change(e)}
             required
           />
         </div>
         <button type="submit">Register</button>
       </form>
+
+      
       {message && <p>{message}</p>}
     </div>
   );
