@@ -75,11 +75,6 @@ const create_user = async (userData) => {
   } = userData;
 
   try {
-
-    if (inauguration_date === '') {
-      inauguration_date = '9999-12-31';
-    }
-    
     // Insert user into the profile table
     const res = await pool.query(
       `INSERT INTO profile (username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email)
