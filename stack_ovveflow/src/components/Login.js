@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button } from '@mui/material';
 import bcrypt from 'bcryptjs';
 
 const Login = ({ handle_login }) => {
   const [username, set_username] = useState('');
   const [password, set_password] = useState('');
+  const navigate = useNavigate();
 
   const handle_username = (event) => {
     set_username(event.target.value);
@@ -14,7 +16,7 @@ const Login = ({ handle_login }) => {
     set_password(event.target.value);
   };
 
-  const submit = async (event) => {
+  const handle_submit = async (event) => {
     event.preventDefault();
 
     try {
@@ -33,6 +35,8 @@ const Login = ({ handle_login }) => {
       if (is_password_valid) {
         handle_login({username: username});
         console.log("Password is valid");
+        navigate(`/profile/${username}`);
+
       } else {
         console.log("Password is invalid");
       }
@@ -42,26 +46,28 @@ const Login = ({ handle_login }) => {
   };
 
   return (
-    <div className="login">
+    <form onSubmit={handle_submit} className="register-form" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '20px' }}>
       <h1>Login</h1>
       <TextField
         label="Användarnamn"
-        sx={{ margin: '8px' }}
+        name="username"
         value={username}
-        onChange={handle_username} />
+        onChange={handle_username}
+        sx={{ margin: '8px' }} />
       <TextField
         label="Lösenord"
+        name="password"
         type="password"
-        sx={{ margin: '8px' }}
         value={password}
-        onChange={handle_password} />
+        onChange={handle_password} 
+        sx={{ margin: '8px' }} />
       <Button
         variant="contained"
-        sx={{ margin: '8px', width: '10vw' }}
-        onClick={submit}>
+        type="submit"
+        sx={{ margin: '8px', width: '10vw' }}>
         Logga in
       </Button>
-    </div>
+    </form>
   );
 }
 
