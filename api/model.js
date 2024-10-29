@@ -9,6 +9,18 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+const get_active_trade_offers_for_user = async (user_id) => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM trade_offer WHERE sending_profile_id = $1 OR recieving_profile_id = $1 AND approved = FALSE;', [user_id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 const get_patches = async () => {
   try {
     const res = await pool.query('SELECT * FROM patch;');
@@ -230,6 +242,7 @@ const get_tradable_patches_for_profile = async (id) => {
 // ett där TST = sy-datum och TET = 9999-12-31 och sewn_on = true
 
 module.exports = {
+  get_active_trade_offers_for_user,
   get_patches,
   get_placement_categories,
   get_users,

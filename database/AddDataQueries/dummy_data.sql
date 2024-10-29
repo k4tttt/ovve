@@ -130,7 +130,6 @@ INSERT INTO profile (username, password, ovve_name, purchase_date, inauguration_
 VALUES
     ('Erik', 'password', 'Erik', '2022-01-15', '2022-02-10', 'Loves adventure and exploration.', 11, 'id16esn@cs.umu.se', 1),
     ('Alva', '$2a$10$IA.J7g7hFexLUHQEYuyR7eVE7Bz/v.nfLh7wC6C2VaeuKOlVyutvS', 'Alva', '2023-03-12', '2023-04-05', 'Passionate about technology.', 11, 'id21ash@cs.umu.se', 1),
-    ('k4tt', 'password', 'TYRA', '2022-03-22', '2024-04-14', 'sliving my life. crunchy crunchy lorem ipsum mamma mia hundar börjar tala mat! idag ska jag äta ett äpple, very charli core of me, very newton core. är detta tillräckligt långt?', 11, 'id21twn@cs.umu.se', 1),
     ('dataguy', 'password', '', '2023-03-12', '2023-04-05', 'DATA', 13, 'dv22dgy@cs.umu.se', 1);
 
 INSERT INTO placement_category (name)
@@ -171,5 +170,14 @@ VALUES
 SELECT * FROM patch_status WHERE sewn_on = TRUE;
 
 SELECT * FROM patch_sewn_view;
-
+SELECT * FROM profile;
 SELECT * FROM patch_not_sewn_view;
+
+INSERT INTO trade_offer (sending_profile_id, recieving_profile_id, approved)
+VALUES
+(1, 3, FALSE),
+(1, 2, FALSE),
+(1, 3, FALSE),
+(2, 3, FALSE);
+
+SELECT * FROM trade_offer WHERE sending_profile_id = 1 OR recieving_profile_id = 1 AND approved = FALSE;
