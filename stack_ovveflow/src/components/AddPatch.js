@@ -224,7 +224,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
             name='obtained_date'
             type="date"
             slotProps={{
-              inputProps: { shrink: true }
+              inputLabel: { shrink: true, }
             }}
             value={inventory_data.obtained_date}
             onChange={handle_inventory_change}
@@ -269,7 +269,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
             name='TST'
             type="date"
             slotProps={{
-              inputProps: { shrink: true }
+              inputLabel: { shrink: true, }
             }}
             value={patch_status_data.TST}
             onChange={handle_patch_status_change}
