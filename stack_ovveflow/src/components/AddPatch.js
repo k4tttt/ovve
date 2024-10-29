@@ -123,7 +123,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
           console.log("patch is sewn and bought on same day");
           console.log(status_request_body);
         } else if (inventory_data.obtained_date < patch_status_data.TST) {
-          const previous_status_body = { ...status_request_body, TET: patch_status_data.TST, TST: inventory_data.obtained_date };
+          const previous_status_body = { ...status_request_body, TET: patch_status_data.TST, TST: inventory_data.obtained_date, sewn_on: false };
           console.log("patch is sewn after bought, insert this first: ");
           console.log(previous_status_body);
           
@@ -292,7 +292,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
           </TextField>
         </div> : <></>}
 
-        <Button variant='contained' sx={{ margin: '8px' }} onClick={handle_submit}>Lägg till märke</Button>
+        <Button variant='contained' sx={{ margin: '8px', marginBottom: '100px' }} onClick={handle_submit}>Lägg till märke</Button>
       </form>
     </div>
   );
