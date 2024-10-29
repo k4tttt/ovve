@@ -25,7 +25,6 @@ const Profile = ({ user }) => {
       })
       .then((data) => {
         set_user_data(data.result[0]);
-        console.log(data.result[0]);
       })
       .catch((error) => {
         console.log("ERROR when fetching profile: " + error);
@@ -43,7 +42,6 @@ const Profile = ({ user }) => {
         })
         .then((data) => {
           set_user_sewn_patches(data.result);
-          console.log(data.result);
         })
         .catch((error) => {
           console.log("ERROR when fetching sewn patches: " + error);
@@ -62,7 +60,6 @@ const Profile = ({ user }) => {
         })
         .then((data) => {
           set_user_not_sewn_patches(data.result);
-          console.log(data.result);
         })
         .catch((error) => {
           console.log("ERROR when fetching non-sewn patches: " + error);

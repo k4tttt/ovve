@@ -19,7 +19,7 @@ const TimelineSlider = styled(Slider)(({color}) => ({
   '& .MuiSlider-rail': {
     color: `#${color}`,
     opacity: 1,
-    height: '18px',
+    height: '20px',
     borderRadius: 0,
     border: '1px solid #000',
   },
