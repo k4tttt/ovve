@@ -2,7 +2,11 @@ html,
 body {
   margin: 0;
   background-color: #fff;
-  margin: 0 2vw;
+  /* margin: 0 2vw; */
+}
+
+#main {
+  margin: 0 3vw;
 }
 
 h2 {
