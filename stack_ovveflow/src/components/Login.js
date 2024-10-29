@@ -33,7 +33,7 @@ const Login = ({ handle_login }) => {
       console.log(is_password_valid);
 
       if (is_password_valid) {
-        handle_login({username: username});
+        handle_login({ username: username });
         console.log("Password is valid");
         navigate(`/profile/${username}`);
 
@@ -59,7 +59,7 @@ const Login = ({ handle_login }) => {
         name="password"
         type="password"
         value={password}
-        onChange={handle_password} 
+        onChange={handle_password}
         sx={{ margin: '8px' }} />
       <Button
         variant="contained"
@@ -67,6 +67,9 @@ const Login = ({ handle_login }) => {
         sx={{ margin: '8px', width: '10vw' }}>
         Logga in
       </Button>
+      <p>
+        Har du inte ett konto? <a href="/register">Registrera dig här</a>
+      </p>
     </form>
   );
 }
