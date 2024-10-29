@@ -90,7 +90,7 @@ const Profile = ({ user }) => {
   return (
     <>
       {user_data ? <div id="profile">
-        {add_patch_view_active ? <AddPatch user={user} set_add_patch_view_active={set_add_patch_view_active}/> : <></>}
+        {add_patch_view_active ? <AddPatch user={user} set_add_patch_view_active={set_add_patch_view_active} /> : <></>}
         <div className='profile_details'>
           <div className='profile_picture'></div>
           <div className='profile_info'>
@@ -115,9 +115,6 @@ const Profile = ({ user }) => {
             <div className='biography'>
               <p className='small_text'>Om mig</p>
               {user_data.biography}
-              {user.username === username ? <>
-                <p>Du är inloggad som detta konto</p>
-              </> : <></>}
             </div>
           </div>
 
@@ -148,11 +145,8 @@ const Profile = ({ user }) => {
           <div className='title_with_tag'>
             <h3 className='fit_content'>Tidslinje över {user_data.username}'s {convert_to_lower_case(user_data.ovve_type_name)}</h3>
             {user.username === username ? <>
-              <p>Du är inloggad som detta konto</p>
-              id: {user.id}
-              username: {user.username}
+              <Button variant='contained' onClick={() => set_add_patch_view_active(true)}>Lägg till nytt märke</Button>
             </> : <></>}
-            <Button variant='contained' onClick={() => set_add_patch_view_active(true)}>Lägg till nytt märke</Button>
           </div>
           <div className='tag'>{format_date(current_time)}</div>
           <div className='timeline_overview' style={{ display: 'flex', marginBottom: '30px' }}>

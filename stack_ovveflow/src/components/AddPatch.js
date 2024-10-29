@@ -17,7 +17,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
   });
   const [patch_status_data, set_patch_status_data] = useState({
     TST: '',
-    TET: '',
+    TET: '9999-12-31',
     sewn_on: false,
     placement: '',
     patch: '', // this should be the id that inventory returns on insert
@@ -86,25 +86,82 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
     e.preventDefault();
 
     try {
-      const request_body = {
-        ...inventory_data, lost_date: '9999-12-31',
-      };
+      console.log(inventory_data);
+      // First insert to create-inventory
+      const inventory_response = await fetch('http://localhost:3001/create-inventory', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(inventory_data),
+      });
 
-      console.log(request_body);
-      // const response = await fetch('http://localhost:3001/create-user', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(request_body)
-      // });
+      if (!inventory_response.ok) {
+        throw new Error('Failed to create inventory entry');
+      }
 
-      // if (response.ok) {
-      //   // navigate('/');
-      // }
+      const inventory_result = await inventory_response.json();
+      console.log("inserted patch to inventory");
+      console.log(inventory_result.user.id);
+      console.log("CHECKBOX VALUE");
+      console.log(checkbox);
+      let status_request_body = { ...patch_status_data, patch: inventory_result.user.id, sewn_on: checkbox };
+
+      // // Update patch_status_data with the new ID
+      // set_patch_status_data((prevData) => ({
+      //   ...prevData,
+      //   patch: newPatchId,
+      // }));
+
+      if (checkbox === false) {
+        status_request_body = { ...status_request_body, TST: inventory_data.obtained_date, placement: placement_categories.find((obj) => obj.name === 'N/A').id };
+        console.log("sewn on is false");
+        console.log(status_request_body);
+      } else {
+        if (inventory_data.obtained_date === patch_status_data.TST) {
+          // Patch is bought and sewn on the same day -> only one insert
+          console.log("patch is sewn and bought on same day");
+          console.log(status_request_body);
+        } else if (inventory_data.obtained_date < patch_status_data.TST) {
+          const previous_status_body = { ...status_request_body, TET: patch_status_data.TST, TST: inventory_data.obtained_date };
+          console.log("patch is sewn after bought, insert this first: ");
+          console.log(previous_status_body);
+          
+          const previous_status_response = await fetch('http://localhost:3001/create-status', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(previous_status_body),
+          });
+    
+          if (!previous_status_response.ok) {
+            throw new Error('Failed to create status (sewn)');
+          }
+          console.log("inserted past patch status");
+        } else {
+          // Not valid
+          throw new Error('Invalid dates (patch can not be sewn before it is obtained).');
+        }
+      }
+
+      const patch_status_response = await fetch('http://localhost:3001/create-status', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(status_request_body),
+      });
+
+      if (!patch_status_response.ok) {
+        throw new Error('Failed to create status (current)');
+      }
+
+      console.log('inserted current patch status');
     } catch (error) {
-      console.log('An error occurred while connecting to the server.');
+      console.log('An error occurred:', error.message);
     }
+    set_add_patch_view_active(false);
   };
 
   return (
@@ -174,7 +231,6 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
             sx={{ margin: '8px', width: '300px' }}
           />
           <TextField
-            required
             label="Införskaffat från"
             name='obtained_from'
             slotProps={{
@@ -200,13 +256,13 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
 
         <FormControlLabel
           control={
-            <Checkbox checked={checkbox} onChange={() => set_checkbox(!checkbox)} />
+            <Checkbox checked={checkbox} onChange={() => {set_checkbox(!checkbox); console.log(!checkbox)}} />
           }
           label="Jag har sytt på märket"
           sx={{ margin: '0px', width: '100%' }}
         />
 
-        {checkbox ? <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {checkbox ? <div style={{ display: 'flex' }}>
           <TextField
             required
             label="Datum då märket syddes"
@@ -236,7 +292,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
           </TextField>
         </div> : <></>}
 
-        <Button variant='contained' sx={{ margin: '8px' }} onClick={handle_submit}>Lägg till på min ovve</Button>
+        <Button variant='contained' sx={{ margin: '8px' }} onClick={handle_submit}>Lägg till märke</Button>
       </form>
     </div>
   );
