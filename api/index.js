@@ -342,6 +342,47 @@ app.get('/get-determinators/:university', async (req, res) => {
 
 /**
  * @swagger
+ * /get-users:
+ *   get:
+ *     summary: Retrieve the list of all usernames and their id:s.
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       username:
+ *                         type: string
+ *                       id:
+ *                         type: integer
+ *       500:
+ *         description: Connection to the database failed.
+ */
+app.get('/get-users', async (req, res) => {
+  try {
+    const result = await ovve_model.get_users();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
  * /create-user:
  *   post:
  *     summary: Create a new user
@@ -546,6 +587,61 @@ app.get('/get-not-sewn-patches-for-profile-by-date', async (req, res) => {
     }
 
     const result = await ovve_model.get_not_sewn_patches_for_profile_by_date(user_id, date);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /get-tradable-patches-for-profile/{id}:
+ *   get:
+ *     summary: Retrieve patches that are marked as tradable for a specific user.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The user id for the profile which to fetch the tradable patches.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       500:
+ *         description: Connection to the database failed.
+ *       400:
+ *         description: Bad request - User ID is required
+ *       200:
+ *         description: Successfully fetched the tradable patches for the specified user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Connection successful
+ *                 result:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       patch_inventory_id:
+ *                         type: integer
+ *                       patch_name:
+ *                         type: string
+ */
+app.get('/get-tradable-patches-for-profile/:id', async (req, res) => {
+  try {
+    const { id } = req.params;  // Extract user id from query parameters
+    if (!id) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const result = await ovve_model.get_tradable_patches_for_profile(id);
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query

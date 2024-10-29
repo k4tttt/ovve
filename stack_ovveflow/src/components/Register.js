@@ -14,7 +14,7 @@ const RegisterForm = () => {
     color: '',
     type: '',
     email: ''
-    })
+  })
   const [error_message, set_error_message] = useState('');
   const [universities, set_universities] = useState([]);
   const [determinators, set_determinators] = useState([]);
@@ -47,7 +47,7 @@ const RegisterForm = () => {
     };
     fetch_ovve_types();
   }, []);
-  
+
   useEffect(() => {
     if (selected_university) {
       const fetch_determinators = async () => {
@@ -63,11 +63,11 @@ const RegisterForm = () => {
       set_form_data((prev_data) => ({
         ...prev_data,
         color: ''
-      }));    
+      }));
     } else {
       set_determinators([]);
     }
-  }, [selected_university]);  
+  }, [selected_university]);
 
   const handle_change = (e) => {
     const { name, value } = e.target;
@@ -83,9 +83,11 @@ const RegisterForm = () => {
     try {
       const salt = await bcrypt.genSalt(10);
       const hashed_pw = await bcrypt.hash(form_data.password, salt);
-      const request_body = {...form_data, password: hashed_pw, 
-                            inauguration_date: form_data.inauguration_date === '' ?
-                            '9999-12-31' : form_data.inauguration_date};
+      const request_body = {
+        ...form_data, password: hashed_pw,
+        inauguration_date: form_data.inauguration_date === '' ?
+          '9999-12-31' : form_data.inauguration_date
+      };
 
       console.log(request_body);
       const response = await fetch('http://localhost:3001/create-user', {
@@ -108,7 +110,7 @@ const RegisterForm = () => {
     }
   };
 
-  return (    
+  return (
     <form onSubmit={handle_submit} className="register-form" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', padding: '20px' }}>
       <h1>Skapa konto</h1>
       <TextField
@@ -118,11 +120,11 @@ const RegisterForm = () => {
         value={form_data.username}
         onChange={handle_change}
         sx={{ margin: '8px', width: '300px' }}
-        helperText={error_message ? error_message : ''} 
-        error={error_message !== ''} 
-        id={error_message ? "outlined-error-helper-text" : undefined} 
+        helperText={error_message ? error_message : ''}
+        error={error_message !== ''}
+        id={error_message ? "outlined-error-helper-text" : undefined}
       />
-      
+
       <TextField
         required
         label="Lösenord"
@@ -238,6 +240,9 @@ const RegisterForm = () => {
       >
         Skapa konto
       </Button>
+      <p>
+        Har du redan ett konto? <a href="/">Logga in här</a>
+      </p>
     </form>
   );
 }

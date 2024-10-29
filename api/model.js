@@ -60,6 +60,16 @@ const get_ovve_types = async () => {
   }
 };
 
+const get_users = async () => {
+  try {
+    const res = await pool.query('SELECT username, id FROM profile_view;');
+    return res;  // Return the result of the query
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;  // Throw the error to be caught in the API handler
+  }
+};
+
 const get_profile_by_username = async (username) => {
   try {
     const res = await pool.query('SELECT * FROM profile_view WHERE username = $1;', [username]);
@@ -181,6 +191,18 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
   }
 };
 
+const get_tradable_patches_for_profile = async (id) => {
+  try {
+    const res = await pool.query(
+      'SELECT p_i.id AS patch_inventory_id, p.name AS patch_name FROM patch_inventory p_i JOIN patch p ON p.id = p_i.patch_id WHERE p_i.profile_id = $1 AND p_i.tradable = TRUE ORDER BY p.name ASC;', [id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 // när man insertar en ny patch på sin profil ska:
 // 1: om patchen inte finns, lägg till den i patch
 // 2: lägg till patchen i användarens inventory med angett obtained_date
@@ -198,11 +220,13 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
 module.exports = {
   get_patches,
   get_placement_categories,
+  get_users,
   get_profile_by_username,
   get_universities,
   get_determinators,
   get_ovve_types,
   get_password_by_username,
+  get_tradable_patches_for_profile,
   create_user,
   create_inventory,
   create_status,
