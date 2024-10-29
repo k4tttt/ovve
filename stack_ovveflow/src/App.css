@@ -165,3 +165,16 @@ tr td, tr th {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   padding: 0 20px;
 }
+
+.category_buttons button {
+  margin: 0 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border: none;
+  background-color: #f0f0f0;
+}
+
+.category_buttons .active {
+  background-color: #cfd2ff;
+  font-weight: bold;
+}

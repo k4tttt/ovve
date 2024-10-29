@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { Button } from '@mui/material';
 
-import TimelineSlider from './TimelineSlider';
 import AddPatch from './AddPatch';
 import OvveTimeline from './OvveTimeline';
 import PatchTable from './PatchTable';
@@ -13,6 +12,7 @@ const Profile = ({ user }) => {
   const [user_data, set_user_data] = useState(null);
   const [user_sewn_patches, set_user_sewn_patches] = useState(null);
   const [user_not_sewn_patches, set_user_not_sewn_patches] = useState(null);
+  const [user_trade_patches, set_user_trade_patches] = useState(null);
   const [slider_value, set_slider_value] = useState(new Date().getTime());
   const [current_time, set_current_time] = useState(new Date().getTime());
   const [add_patch_view_active, set_add_patch_view_active] = useState(false);
@@ -68,6 +68,24 @@ const Profile = ({ user }) => {
         });
     }
   }, [user_data, current_time]);
+
+  useEffect(() => {
+    if (user_data) {
+      fetch(`http://localhost:3001/get-trade-patches-for-profile-by-date?user_id=${user_data.id}&date=${new Date(current_time).toLocaleDateString()}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          set_user_trade_patches(data.result);
+        })
+        .catch((error) => {
+          console.log("ERROR when fetching trade patches: " + error);
+        });
+    }
+  }, [user_data]);  
 
   const format_date = (dateString) => {
     const date = new Date(dateString);
@@ -193,7 +211,12 @@ const Profile = ({ user }) => {
           </div>
           {user_sewn_patches && user_not_sewn_patches ? (
             <div>
-              <PatchTable patches={user_sewn_patches} format_date={format_date} />
+              <PatchTable 
+                sewnPatches={user_sewn_patches} 
+                notSewnPatches={user_not_sewn_patches} 
+                tradePatches={user_trade_patches}  // replace with actual data
+                format_date={format_date} 
+              />
             </div>
           ) : null}
         </div> : <></>}

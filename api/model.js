@@ -191,6 +191,18 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
   }
 };
 
+const get_trade_patches_for_profile_by_date = async (user_id, date) => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM trade_patch_view WHERE profile_id = $1 AND $2 >= TST AND $2 < TET;', [user_id, date]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  }
+};
+
 const get_tradable_patches_for_profile = async (id) => {
   try {
     const res = await pool.query(
@@ -232,4 +244,5 @@ module.exports = {
   create_status,
   get_sewn_patches_for_profile_by_date,
   get_not_sewn_patches_for_profile_by_date,
+  get_trade_patches_for_profile_by_date,
 };
