@@ -665,6 +665,19 @@ app.get('/get-patches', async (req, res) => {
   }
 });
 
+app.get('/get-placement-categories', async (req, res) => {
+  try {
+    const result = await ovve_model.get_placement_categories();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });

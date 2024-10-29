@@ -30,11 +30,8 @@ const Login = ({ handle_login }) => {
 
       const is_password_valid = await bcrypt.compare(password, data.result.password);
 
-      console.log(is_password_valid);
-
       if (is_password_valid) {
-        handle_login({ username: username });
-        console.log("Password is valid");
+        handle_login({username: username, id: data.result.id});
         navigate(`/profile/${username}`);
 
       } else {

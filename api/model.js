@@ -11,13 +11,24 @@ const pool = new Pool({
 
 const get_patches = async () => {
   try {
-    const res = await pool.query('SELECT * FROM patch');
+    const res = await pool.query('SELECT * FROM patch;');
     return res;  // Return the result of the query
   } catch (err) {
     console.error('Error executing query', err);
     throw err;  // Throw the error to be caught in the API handler
   }
 };
+
+const get_placement_categories = async () => {
+  try {
+    const res = await pool.query('SELECT * FROM placement_category;');
+    return res;  // Return the result of the query
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;  // Throw the error to be caught in the API handler
+  }
+};
+
 
 const get_universities = async () => {
   try {
@@ -71,7 +82,7 @@ const get_profile_by_username = async (username) => {
 
 const get_password_by_username = async (username) => {
   try {
-    const res = await pool.query('SELECT password FROM profile WHERE username = $1;', [username]);
+    const res = await pool.query('SELECT password, id FROM profile WHERE username = $1;', [username]);
     return res.rows[0]; 
   } catch (err) {
     console.error('Error executing query', err);
@@ -208,6 +219,7 @@ const get_tradable_patches_for_profile = async (id) => {
 
 module.exports = {
   get_patches,
+  get_placement_categories,
   get_users,
   get_profile_by_username,
   get_universities,
