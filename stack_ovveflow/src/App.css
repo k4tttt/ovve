@@ -14,6 +14,11 @@ hr {
   color: #ddd;
 }
 
+a {
+  color: blue;
+  text-decoration: underline;
+}
+
 table {
   background-color: #f3f3f3;
   border-collapse: collapse;
@@ -72,6 +77,7 @@ tr td, tr th {
 .detail_with_label {
   margin-right: 24px;
 }
+
 
 .ovve_color_text {
   font-size: 130px;
