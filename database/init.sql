@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS trade_offer;
 DROP TABLE IF EXISTS trade_offer_patch;
+DROP TABLE IF EXISTS trade_offer;
 DROP VIEW IF EXISTS patch_not_sewn_view;
 DROP VIEW IF EXISTS patch_sewn_view;
 DROP INDEX IF EXISTS idx_profile;

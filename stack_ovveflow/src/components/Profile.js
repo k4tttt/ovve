@@ -5,6 +5,8 @@ import { Button } from '@mui/material';
 
 import TimelineSlider from './TimelineSlider';
 import AddPatch from './AddPatch';
+import OvveTimeline from './OvveTimeline';
+import PatchTable from './PatchTable';
 
 const Profile = ({ user }) => {
   const { username } = useParams();
@@ -25,7 +27,6 @@ const Profile = ({ user }) => {
       })
       .then((data) => {
         set_user_data(data.result[0]);
-        console.log(data.result[0]);
       })
       .catch((error) => {
         console.log("ERROR when fetching profile: " + error);
@@ -43,7 +44,6 @@ const Profile = ({ user }) => {
         })
         .then((data) => {
           set_user_sewn_patches(data.result);
-          console.log(data.result);
         })
         .catch((error) => {
           console.log("ERROR when fetching sewn patches: " + error);
@@ -62,7 +62,6 @@ const Profile = ({ user }) => {
         })
         .then((data) => {
           set_user_not_sewn_patches(data.result);
-          console.log(data.result);
         })
         .catch((error) => {
           console.log("ERROR when fetching non-sewn patches: " + error);
@@ -90,7 +89,7 @@ const Profile = ({ user }) => {
   return (
     <>
       {user_data ? <div id="profile">
-        {add_patch_view_active ? <AddPatch user={user} set_add_patch_view_active={set_add_patch_view_active}/> : <></>}
+        {add_patch_view_active ? <AddPatch user={user} set_add_patch_view_active={set_add_patch_view_active} /> : <></>}
         <div className='profile_details'>
           <div className='profile_picture'></div>
           <div className='profile_info'>
@@ -115,9 +114,6 @@ const Profile = ({ user }) => {
             <div className='biography'>
               <p className='small_text'>Om mig</p>
               {user_data.biography}
-              {user.username === username ? <>
-                <p>Du är inloggad som detta konto</p>
-              </> : <></>}
             </div>
           </div>
 
@@ -148,11 +144,8 @@ const Profile = ({ user }) => {
           <div className='title_with_tag'>
             <h3 className='fit_content'>Tidslinje över {user_data.username}'s {convert_to_lower_case(user_data.ovve_type_name)}</h3>
             {user.username === username ? <>
-              <p>Du är inloggad som detta konto</p>
-              id: {user.id}
-              username: {user.username}
+              <Button variant='contained' onClick={() => set_add_patch_view_active(true)}>Lägg till nytt märke</Button>
             </> : <></>}
-            <Button variant='contained' onClick={() => set_add_patch_view_active(true)}>Lägg till nytt märke</Button>
           </div>
           <div className='tag'>{format_date(current_time)}</div>
           <div className='timeline_overview' style={{ display: 'flex', marginBottom: '30px' }}>
@@ -182,54 +175,27 @@ const Profile = ({ user }) => {
                 </tr>
               </tbody>
             </table>
-            <div className='ovve_timeline'>
-              <TimelineSlider
-                min={new Date(user_data.purchase_date).getTime()}
-                max={new Date().getTime()}
-                value={slider_value}
-                onChange={(e) => set_slider_value(e.target.value)}
-                onChangeCommitted={() => { set_current_time(slider_value) }}
-                aria-label="Default"
-                valueLabelDisplay="on"
-                valueLabelFormat={(value) => format_date(value)}
-                track={false}
-                color={user_data.color_hex}
-                marks={[
-                  { value: new Date(user_data.purchase_date).getTime(), label: format_date(user_data.purchase_date) },
-                  { value: new Date(user_data.inauguration_date).getTime(), label: `` },
-                  { value: new Date().getTime(), label: `${format_date(new Date())}` }
-                ]}
-              />
+            
+            <OvveTimeline
+              min={new Date(user_data.purchase_date).getTime()}
+              max={new Date().getTime()}
+              value={slider_value}
+              onChange={(e) => set_slider_value(e.target.value)}
+              onChangeCommitted={() => set_current_time(slider_value)}
+              format_date={format_date}
+              color_hex={user_data.color_hex}
+              marks={[
+                { value: new Date(user_data.purchase_date).getTime(), label: format_date(user_data.purchase_date) },
+                { value: new Date(user_data.inauguration_date).getTime(), label: `` },
+                { value: new Date().getTime(), label: `${format_date(new Date())}` }
+              ]}
+            />
+          </div>
+          {user_sewn_patches && user_not_sewn_patches ? (
+            <div>
+              <PatchTable patches={user_sewn_patches} format_date={format_date} />
             </div>
-          </div>
-
-          <div className='patch_table'>
-            <h3>Sydda märken</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Märke</th>
-                  <th>Skapare</th>
-                  <th>Införskaffad</th>
-                  <th>Införskaffad från</th>
-                  <th>Pris</th>
-                  <th>Placering</th>
-                </tr>
-              </thead>
-              <tbody>
-                {user_sewn_patches.map((patch, index) => (
-                  <tr key={index}>
-                    <td>{patch.name}</td>
-                    <td>{patch.creator}</td>
-                    <td>{format_date(patch.obtained_date)}</td>
-                    <td>{patch.obtained_from}</td>
-                    <td>{patch.price} kr</td>
-                    <td>{patch.placement_category}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          ) : null}
         </div> : <></>}
 
       </div> : <></>}

@@ -169,7 +169,7 @@ const RegisterForm = () => {
         name="purchase_date"
         type="date"
         slotProps={{
-          inputProps: { shrink: true }
+          inputLabel: { shrink: true, }
         }}
         value={form_data.purchase_date}
         onChange={handle_change}
@@ -180,6 +180,9 @@ const RegisterForm = () => {
         label="Datum då ovve invigdes"
         name="inauguration_date"
         type="date"
+        slotProps={{
+          inputLabel: { shrink: true, }
+        }}
         value={form_data.inauguration_date}
         onChange={handle_change}
         sx={{ margin: '8px', width: '300px' }}
