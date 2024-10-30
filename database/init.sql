@@ -298,6 +298,7 @@ SELECT
   trade_offer_patch.trade_offer_id,
   trade_offer_patch.owning_profile AS owner_id,
   owner.username AS owner_name,
+  patch.id AS patch_id,
   patch.name AS patch_name,
   patch.creator AS patch_creator,
   patch_inventory.price AS patch_price
