@@ -1,5 +1,5 @@
 DROP VIEW IF EXISTS trade_offer_patches_view;
-DROP VIEW IF EXISTS active_trade_offer_view;
+DROP VIEW IF EXISTS trade_offer_view;
 DROP TABLE IF EXISTS trade_offer_patch;
 DROP TABLE IF EXISTS trade_offer;
 DROP VIEW IF EXISTS trade_patch_view;
@@ -277,7 +277,7 @@ CREATE TABLE trade_offer_patch (
     patch INTEGER REFERENCES patch_inventory(id)
 );
 
-CREATE OR REPLACE VIEW active_trade_offer_view AS
+CREATE OR REPLACE VIEW trade_offer_view AS
 SELECT
   trade_offer.id,
   sender.id AS sender_id,
@@ -285,13 +285,12 @@ SELECT
   sender.email AS sender_email,
   receiver.id AS receiver_id,
   receiver.username AS receiver_name,
-  receiver.email AS receiver_email
+  receiver.email AS receiver_email,
+  trade_offer.approved
 FROM
   trade_offer
 JOIN profile sender ON trade_offer.sending_profile_id = sender.id
-JOIN profile receiver ON trade_offer.recieving_profile_id = receiver.id
-WHERE trade_offer.approved = FALSE;
-
+JOIN profile receiver ON trade_offer.recieving_profile_id = receiver.id;
 
 CREATE OR REPLACE VIEW trade_offer_patches_view AS
 SELECT

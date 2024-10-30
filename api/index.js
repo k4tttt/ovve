@@ -55,14 +55,14 @@ app.get('/test-connection', async (req, res) => {
   }
 });
 
-app.get('/get-active-trade-offers-for-user', async (req, res) => {
+app.get('/get-trade-offers-for-user', async (req, res) => {
   try {
     const {user_id} = req.query;  // Extract user_id from query parameters
     if (!user_id) {
       return res.status(400).json({ error: 'User ID is required' });
     }
 
-    const result = await ovve_model.get_active_trade_offers_for_user(user_id);
+    const result = await ovve_model.get_trade_offers_for_user(user_id);
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query
