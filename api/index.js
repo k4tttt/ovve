@@ -55,6 +55,60 @@ app.get('/test-connection', async (req, res) => {
   }
 });
 
+app.get('/get-trade-offers-for-user', async (req, res) => {
+  try {
+    const {user_id} = req.query;  // Extract user_id from query parameters
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    const result = await ovve_model.get_trade_offers_for_user(user_id);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+app.get('/get-trade-offer-patches', async (req, res) => {
+  try {
+    const {trade_id} = req.query;  // Extract user_id from query parameters
+    if (!trade_id) {
+      return res.status(400).json({ error: 'Trade ID is required' });
+    }
+
+    const result = await ovve_model.get_trade_offer_patches(trade_id);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+app.put('/set-trade-offer-to-approved', async (req, res) => {
+  try {
+    const {trade_id} = req.body;  // Extract user_id from query parameters
+    if (!trade_id) {
+      return res.status(400).json({ error: 'Trade ID is required' });
+    }
+
+    const result = await ovve_model.set_trade_offer_to_approved(trade_id);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 /**
  * @swagger
  * /get-profile:
@@ -492,10 +546,10 @@ app.post('/create-user', async (req, res) => {
  */
 app.post('/create-inventory', async (req, res) => {
   try {
-    const { patch_id, profile_id, price, obtained_date, lost_date, obtained_from } = req.body;
+    const { patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable } = req.body;
 
     const result = await ovve_model.create_inventory({
-      patch_id, profile_id, price, obtained_date, lost_date, obtained_from
+      patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable
     });
 
     res.status(201).json({
@@ -597,6 +651,24 @@ app.get('/get-not-sewn-patches-for-profile-by-date', async (req, res) => {
   }
 });
 
+app.get('/get-trade-patches-for-profile-by-date', async (req, res) => {
+  try {
+    const { user_id, date } = req.query;  // Extract user_id and date from query parameters
+    if (!user_id || !date) {
+      return res.status(400).json({ error: 'User ID and Date are required' });
+    }
+
+    const result = await ovve_model.get_trade_patches_for_profile_by_date(user_id, date);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 /**
  * @swagger
  * /get-tradable-patches-for-profile/{id}:
@@ -668,6 +740,19 @@ app.get('/get-patches', async (req, res) => {
 app.get('/get-placement-categories', async (req, res) => {
   try {
     const result = await ovve_model.get_placement_categories();
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+app.get('/get-all-trade-patches', async (req, res) => {
+  try {
+    const result = await ovve_model.get_all_trade_patches();
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query

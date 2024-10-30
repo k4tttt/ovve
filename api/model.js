@@ -9,6 +9,42 @@ const pool = new Pool({
   port: process.env.DB_PORT,
 });
 
+const get_trade_offers_for_user = async (user_id) => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM trade_offer_view WHERE sender_id = $1 OR receiver_id = $1;', [user_id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
+const get_trade_offer_patches = async (trade_id) => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM trade_offer_patches_view WHERE trade_offer_id = $1;', [trade_id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
+const set_trade_offer_to_approved = async (trade_id) => {
+  try {
+    const res = await pool.query(
+      'UPDATE trade_offer SET approved = TRUE WHERE id = $1;', [trade_id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 const get_patches = async () => {
   try {
     const res = await pool.query('SELECT * FROM patch;');
@@ -125,16 +161,16 @@ const create_user = async (userData) => {
 
 const create_inventory = async (userData) => {
   const {
-    patch_id, profile_id, price, obtained_date, lost_date, obtained_from
+    patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable
   } = userData;
 
   try {
     // Insert inventory into the patch_inventory table
     const res = await pool.query(
-      `INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id;`,
-      [patch_id, profile_id, price, obtained_date, lost_date, obtained_from]
+      [patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable]
     );
 
     return res.rows[0]; 
@@ -191,10 +227,34 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
   }
 };
 
+const get_trade_patches_for_profile_by_date = async (user_id, date) => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM trade_patch_view WHERE profile_id = $1 AND $2 >= TST AND $2 < TET;', [user_id, date]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  }
+};
+
 const get_tradable_patches_for_profile = async (id) => {
   try {
     const res = await pool.query(
       'SELECT p_i.id AS patch_inventory_id, p.name AS patch_name FROM patch_inventory p_i JOIN patch p ON p.id = p_i.patch_id WHERE p_i.profile_id = $1 AND p_i.tradable = TRUE ORDER BY p.name ASC;', [id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
+const get_all_trade_patches = async () => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM tradable_patches;', [id]
     );
     return res;
   } catch (err) {
@@ -218,6 +278,9 @@ const get_tradable_patches_for_profile = async (id) => {
 // ett där TST = sy-datum och TET = 9999-12-31 och sewn_on = true
 
 module.exports = {
+  get_trade_offers_for_user,
+  get_trade_offer_patches,
+  set_trade_offer_to_approved,
   get_patches,
   get_placement_categories,
   get_users,
@@ -232,4 +295,6 @@ module.exports = {
   create_status,
   get_sewn_patches_for_profile_by_date,
   get_not_sewn_patches_for_profile_by_date,
+  get_trade_patches_for_profile_by_date,
+  get_all_trade_patches,
 };

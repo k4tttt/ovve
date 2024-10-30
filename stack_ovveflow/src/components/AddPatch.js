@@ -6,7 +6,8 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
   const [placement_categories, set_placement_categories] = useState([]);
   const [selected_patch, set_selected_patch] = useState(null);
   const [patch_creator, set_patch_creator] = useState('');
-  const [checkbox, set_checkbox] = useState(false);
+  const [sewn_checkbox, set_sewn_checkbox] = useState(false);
+  const [tradeable_checkbox, set_tradeable_checkbox] = useState(false);
   const [inventory_data, set_inventory_data] = useState({
     patch_id: '',
     profile_id: user.id,
@@ -14,6 +15,7 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
     obtained_date: '',
     lost_date: '9999-12-31',
     obtained_from: '',
+    tradable: false
   });
   const [patch_status_data, set_patch_status_data] = useState({
     TST: '',
@@ -86,14 +88,14 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
     e.preventDefault();
 
     try {
-      console.log(inventory_data);
+      const inventory_request_body = { ...inventory_data, tradable: tradeable_checkbox };
       // First insert to create-inventory
       const inventory_response = await fetch('http://localhost:3001/create-inventory', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(inventory_data),
+        body: JSON.stringify(inventory_request_body),
       });
 
       if (!inventory_response.ok) {
@@ -101,19 +103,10 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
       }
 
       const inventory_result = await inventory_response.json();
-      console.log("inserted patch to inventory");
-      console.log(inventory_result.user.id);
-      console.log("CHECKBOX VALUE");
-      console.log(checkbox);
-      let status_request_body = { ...patch_status_data, patch: inventory_result.user.id, sewn_on: checkbox };
 
-      // // Update patch_status_data with the new ID
-      // set_patch_status_data((prevData) => ({
-      //   ...prevData,
-      //   patch: newPatchId,
-      // }));
+      let status_request_body = { ...patch_status_data, patch: inventory_result.user.id, sewn_on: sewn_checkbox };
 
-      if (checkbox === false) {
+      if (sewn_checkbox === false) {
         status_request_body = { ...status_request_body, TST: inventory_data.obtained_date, placement: placement_categories.find((obj) => obj.name === 'N/A').id };
         console.log("sewn on is false");
         console.log(status_request_body);
@@ -256,13 +249,21 @@ const AddPatch = ({ user, set_add_patch_view_active }) => {
 
         <FormControlLabel
           control={
-            <Checkbox checked={checkbox} onChange={() => {set_checkbox(!checkbox); console.log(!checkbox)}} />
+            <Checkbox checked={tradeable_checkbox} onChange={() => {set_tradeable_checkbox(!tradeable_checkbox)}} />
+          }
+          label="Jag vill markera märket som bytbart"
+          sx={{ margin: '0px', width: '100%' }}
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox checked={sewn_checkbox} onChange={() => {set_sewn_checkbox(!sewn_checkbox)}} />
           }
           label="Jag har sytt på märket"
           sx={{ margin: '0px', width: '100%' }}
         />
 
-        {checkbox ? <div style={{ display: 'flex' }}>
+        {sewn_checkbox ? <div style={{ display: 'flex' }}>
           <TextField
             required
             label="Datum då märket syddes"

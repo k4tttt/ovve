@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import { Button } from '@mui/material';
 
-import TimelineSlider from './TimelineSlider';
 import AddPatch from './AddPatch';
 import OvveTimeline from './OvveTimeline';
 import PatchTable from './PatchTable';
@@ -13,6 +12,7 @@ const Profile = ({ user }) => {
   const [user_data, set_user_data] = useState(null);
   const [user_sewn_patches, set_user_sewn_patches] = useState(null);
   const [user_not_sewn_patches, set_user_not_sewn_patches] = useState(null);
+  const [user_trade_patches, set_user_trade_patches] = useState(null);
   const [slider_value, set_slider_value] = useState(new Date().getTime());
   const [current_time, set_current_time] = useState(new Date().getTime());
   const [add_patch_view_active, set_add_patch_view_active] = useState(false);
@@ -69,8 +69,26 @@ const Profile = ({ user }) => {
     }
   }, [user_data, current_time]);
 
-  const format_date = (dateString) => {
-    const date = new Date(dateString);
+  useEffect(() => {
+    if (user_data) {
+      fetch(`http://localhost:3001/get-trade-patches-for-profile-by-date?user_id=${user_data.id}&date=${new Date(current_time).toLocaleDateString()}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then((data) => {
+          set_user_trade_patches(data.result);
+        })
+        .catch((error) => {
+          console.log("ERROR when fetching trade patches: " + error);
+        });
+    }
+  }, [user_data]);  
+
+  const format_date = (date_string) => {
+    const date = new Date(date_string);
     return date.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'short',
@@ -78,12 +96,12 @@ const Profile = ({ user }) => {
     });
   };
 
-  const convert_to_upper_case = (inputString) => {
-    return inputString.toUpperCase();
+  const convert_to_upper_case = (input_string) => {
+    return input_string.toUpperCase();
   };
 
-  const convert_to_lower_case = (inputString) => {
-    return inputString.toLowerCase();
+  const convert_to_lower_case = (input_string) => {
+    return input_string.toLowerCase();
   };
 
   return (
@@ -150,12 +168,6 @@ const Profile = ({ user }) => {
           <div className='tag'>{format_date(current_time)}</div>
           <div className='timeline_overview' style={{ display: 'flex', marginBottom: '30px' }}>
             <table>
-              {/* <thead>
-                <tr>
-                  <th>Stat</th>
-                  <th>Antal</th>
-                </tr>
-              </thead> */}
               <tbody>
                 <tr>
                   <td>Sydda märken</td>
@@ -193,7 +205,13 @@ const Profile = ({ user }) => {
           </div>
           {user_sewn_patches && user_not_sewn_patches ? (
             <div>
-              <PatchTable patches={user_sewn_patches} format_date={format_date} />
+              <PatchTable 
+                sewn_patches={user_sewn_patches}
+                not_sewn_patches={user_not_sewn_patches}
+                trade_patches={user_trade_patches}
+                format_date={format_date}
+                is_owner={user.username === username}
+              />
             </div>
           ) : null}
         </div> : <></>}

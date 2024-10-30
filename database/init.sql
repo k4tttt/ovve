@@ -1,5 +1,9 @@
+DROP VIEW IF EXISTS tradable_patches;
+DROP VIEW IF EXISTS trade_offer_patches_view;
+DROP VIEW IF EXISTS trade_offer_view;
 DROP TABLE IF EXISTS trade_offer_patch;
 DROP TABLE IF EXISTS trade_offer;
+DROP VIEW IF EXISTS trade_patch_view;
 DROP VIEW IF EXISTS patch_not_sewn_view;
 DROP VIEW IF EXISTS patch_sewn_view;
 DROP INDEX IF EXISTS idx_profile;
@@ -15,7 +19,6 @@ DROP TABLE IF EXISTS profile;
 DROP TABLE IF EXISTS ovve_type;
 DROP TABLE IF EXISTS ovve_color;
 DROP FUNCTION IF EXISTS status_update;
-
 
 CREATE TABLE ovve_color (
     id SERIAL PRIMARY KEY,
@@ -185,6 +188,27 @@ JOIN patch_category p_c ON p.category = p_c.id
 JOIN placement_category ON p_s.placement = placement_category.id
 WHERE p_s.sewn_on = FALSE;
 
+CREATE OR REPLACE VIEW trade_patch_view AS
+SELECT
+  p.id AS patch_id,
+  p_i.profile_id,
+  p.name,
+  p.creator,
+  p_i.price,
+  p_i.obtained_from,
+  p_i.obtained_date,
+  p_i.lost_date,
+  p_c.name AS category,
+  p_s.TST,
+  p_s.TET,
+  placement_category.name AS placement_category
+FROM
+  patch_status p_s
+JOIN patch_inventory p_i ON p_s.patch = p_i.id
+JOIN patch p ON p_i.patch_id = p.id
+JOIN patch_category p_c ON p.category = p_c.id
+JOIN placement_category ON p_s.placement = placement_category.id
+WHERE p_i.tradable = TRUE;
 
 CREATE FUNCTION status_update()
 RETURNS TRIGGER AS $$
@@ -252,3 +276,56 @@ CREATE TABLE trade_offer_patch (
     owning_profile INTEGER REFERENCES profile(id),
     patch INTEGER REFERENCES patch_inventory(id)
 );
+
+CREATE OR REPLACE VIEW trade_offer_view AS
+SELECT
+  trade_offer.id,
+  sender.id AS sender_id,
+  sender.username AS sender_name,
+  sender.email AS sender_email,
+  receiver.id AS receiver_id,
+  receiver.username AS receiver_name,
+  receiver.email AS receiver_email,
+  trade_offer.approved
+FROM
+  trade_offer
+JOIN profile sender ON trade_offer.sending_profile_id = sender.id
+JOIN profile receiver ON trade_offer.recieving_profile_id = receiver.id;
+
+CREATE OR REPLACE VIEW trade_offer_patches_view AS
+SELECT
+  trade_offer_patch.trade_offer_id,
+  trade_offer_patch.owning_profile AS owner_id,
+  owner.username AS owner_name,
+  patch.id AS patch_id,
+  patch.name AS patch_name,
+  patch.creator AS patch_creator,
+  patch_inventory.price AS patch_price,
+  patch_inventory.tradable AS tradeable
+FROM
+  trade_offer_patch
+JOIN profile owner ON trade_offer_patch.owning_profile = owner.id
+JOIN patch_inventory ON trade_offer_patch.patch =  patch_inventory.id
+JOIN patch ON patch_inventory.patch_id = patch.id;
+
+
+SELECT * FROM trade_offer WHERE approved = FALSE;
+
+
+CREATE OR REPLACE VIEW tradable_patches AS
+SELECT 
+    profile.username,
+    ovve_color.university,
+    patch.name AS patch_name,
+    patch.creator AS patch_maker,
+    patch_inventory.price AS patch_price
+FROM 
+    patch_inventory
+JOIN 
+    profile ON patch_inventory.profile_id = profile.id
+JOIN 
+    ovve_color ON profile.color = ovve_color.id
+JOIN 
+    patch ON patch_inventory.patch_id = patch.id
+WHERE 
+    patch_inventory.tradable = TRUE;

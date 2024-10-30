@@ -8,6 +8,7 @@ import Profile from './components/Profile';
 import Register from './components/Register';
 import Welcome from './components/Welcome';
 import Trade from './components/Trade';
+import NavBar from './components/NavBar';
 
 function App() {
   const [cookies, set_cookie] = useCookies(['user'])
@@ -29,14 +30,17 @@ function App() {
 
       <CookiesProvider>
         <Router basename='/'>
-          <Routes>
-            <Route exact path="/" element={<Login handle_login={handle_login} />} />
-            <Route path="/profile/:username" element={<Profile user={cookies.user}/>} />
-            <Route path="/trade" element={<Trade user={cookies.user}/>} /> 
+          <NavBar user={cookies.user} />
+          <div id='main'>
+            <Routes>
+              <Route exact path="/" element={<Login handle_login={handle_login} />} />
+              <Route path="/profile/:username" element={<Profile user={cookies.user} />} />
+              <Route path="/trade" element={<Trade user={cookies.user} />} />
 
-            <Route path="/register" element={<Register />} />
-            <Route path="/welcome" element={<Welcome user={cookies.user}/>} />
-          </Routes>
+              <Route path="/register" element={<Register />} />
+              <Route path="/welcome" element={<Welcome user={cookies.user} />} />
+            </Routes>
+          </div>
         </Router>
       </CookiesProvider>
     </div>
