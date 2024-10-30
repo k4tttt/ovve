@@ -251,6 +251,18 @@ const get_tradable_patches_for_profile = async (id) => {
   }
 };
 
+const get_all_trade_patches = async () => {
+  try {
+    const res = await pool.query(
+      'SELECT * FROM tradable_patches;', [id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 // när man insertar en ny patch på sin profil ska:
 // 1: om patchen inte finns, lägg till den i patch
 // 2: lägg till patchen i användarens inventory med angett obtained_date
@@ -284,4 +296,5 @@ module.exports = {
   get_sewn_patches_for_profile_by_date,
   get_not_sewn_patches_for_profile_by_date,
   get_trade_patches_for_profile_by_date,
+  get_all_trade_patches,
 };
