@@ -755,7 +755,7 @@ app.get('/get-all-trade-patches', async (req, res) => {
     const result = await ovve_model.get_all_trade_patches();
     res.status(200).json({
       message: "Connection successful",
-      result: result.rows,  // Return the rows fetched by the query
+      result: result.rows,
     });
   } catch (err) {
     console.error(err);

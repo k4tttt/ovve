@@ -253,15 +253,14 @@ const get_tradable_patches_for_profile = async (id) => {
 
 const get_all_trade_patches = async () => {
   try {
-    const res = await pool.query(
-      'SELECT * FROM tradable_patches;', [id]
-    );
+    const res = await pool.query('SELECT * FROM tradable_patches;');
     return res;
   } catch (err) {
     console.error('Error executing query', err);
     throw err; 
   }
 };
+
 
 // när man insertar en ny patch på sin profil ska:
 // 1: om patchen inte finns, lägg till den i patch

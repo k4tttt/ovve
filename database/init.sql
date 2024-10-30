@@ -311,7 +311,6 @@ JOIN patch ON patch_inventory.patch_id = patch.id;
 
 SELECT * FROM trade_offer WHERE approved = FALSE;
 
-
 CREATE OR REPLACE VIEW tradable_patches AS
 SELECT 
     profile.username,

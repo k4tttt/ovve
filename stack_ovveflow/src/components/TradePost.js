@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const PatchRow = ({ username, university, patch_name, patch_maker, patch_price }) => (
-    <div class_name="patch-row">
+    <div className="patch-row">
         <h3>{patch_name}</h3>
         <p><strong>Maker:</strong> {patch_maker}</p>
         <p><strong>Owner:</strong> {username}</p>
@@ -19,4 +19,4 @@ PatchRow.propTypes = {
     patch_price: PropTypes.number.isRequired
 };
 
-export default TradePost;
+export default PatchRow;

@@ -9,6 +9,7 @@ import Register from './components/Register';
 import Welcome from './components/Welcome';
 import Trade from './components/Trade';
 import NavBar from './components/NavBar';
+import TradeList from './components/TradeList';
 
 function App() {
   const [cookies, set_cookie] = useCookies(['user'])
@@ -39,6 +40,7 @@ function App() {
 
               <Route path="/register" element={<Register />} />
               <Route path="/welcome" element={<Welcome user={cookies.user} />} />
+              <Route path="/tradelist" element={<TradeList />} />
             </Routes>
           </div>
         </Router>

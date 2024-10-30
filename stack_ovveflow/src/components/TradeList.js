@@ -1,33 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import PatchRow from './PatchRow';
+import PatchRow from './TradePost';
 
 const TradeList = () => {
-    const [patches, setPatches] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [patches, set_patches] = useState([]);
 
     useEffect(() => {
-        const fetchPatches = async () => {
-            try {
-                const response = await fetch(`http://localhost:3001/get-all-trade-patches`); // Replace with actual endpoint
-                if (response.ok) {
-                    const data = await response.json();
-                    setPatches(data);
-                } else {
-                    console.error('Failed to fetch patches');
+        fetch('http://localhost:3001/get-all-trade-patches')
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            } catch (error) {
-                console.error('Error:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchPatches();
+                return response.json();
+            })
+            .then((data) => {
+                set_patches(data.result); // Assuming data.result contains the array of patches
+            })
+            .catch((error) => {
+                console.log("ERROR when fetching patches: " + error);
+            });
     }, []);
-
-    if (loading) return <p>Loading patches...</p>;
 
     return (
         <div className="patch-list">
+            <h1>Patches for trade!</h1>
             {patches.map((patch, index) => (
                 <PatchRow
                     key={index}
