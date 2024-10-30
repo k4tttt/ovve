@@ -1,5 +1,8 @@
+DROP VIEW IF EXISTS trade_offer_patches_view;
+DROP VIEW IF EXISTS active_trade_offer_view;
 DROP TABLE IF EXISTS trade_offer_patch;
 DROP TABLE IF EXISTS trade_offer;
+DROP VIEW IF EXISTS trade_patch_view;
 DROP VIEW IF EXISTS patch_not_sewn_view;
 DROP VIEW IF EXISTS patch_sewn_view;
 DROP INDEX IF EXISTS idx_profile;
@@ -273,3 +276,36 @@ CREATE TABLE trade_offer_patch (
     owning_profile INTEGER REFERENCES profile(id),
     patch INTEGER REFERENCES patch_inventory(id)
 );
+
+CREATE OR REPLACE VIEW active_trade_offer_view AS
+SELECT
+  trade_offer.id,
+  sender.id AS sender_id,
+  sender.username AS sender_name,
+  sender.email AS sender_email,
+  receiver.id AS receiver_id,
+  receiver.username AS receiver_name,
+  receiver.email AS receiver_email
+FROM
+  trade_offer
+JOIN profile sender ON trade_offer.sending_profile_id = sender.id
+JOIN profile receiver ON trade_offer.recieving_profile_id = receiver.id
+WHERE trade_offer.approved = FALSE;
+
+
+CREATE OR REPLACE VIEW trade_offer_patches_view AS
+SELECT
+  trade_offer_patch.trade_offer_id,
+  trade_offer_patch.owning_profile AS owner_id,
+  owner.username AS owner_name,
+  patch.name AS patch_name,
+  patch.creator AS patch_creator,
+  patch_inventory.price AS patch_price
+FROM
+  trade_offer_patch
+JOIN profile owner ON trade_offer_patch.owning_profile = owner.id
+JOIN patch_inventory ON trade_offer_patch.patch =  patch_inventory.id
+JOIN patch ON patch_inventory.patch_id = patch.id;
+
+
+SELECT * FROM trade_offer WHERE approved = FALSE;

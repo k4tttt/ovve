@@ -181,3 +181,10 @@ VALUES
 (2, 3, FALSE);
 
 SELECT * FROM trade_offer WHERE sending_profile_id = 1 OR recieving_profile_id = 1 AND approved = FALSE;
+SELECT * FROM patch_inventory WHERE profile_id = 1;
+
+INSERT INTO trade_offer_patch (trade_offer_id, owning_profile, patch)
+VALUES
+(1, 1, 6),
+(1, 1, 7),
+(2, 1, 7);
