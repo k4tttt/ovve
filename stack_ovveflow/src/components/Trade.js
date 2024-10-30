@@ -6,6 +6,7 @@ function Trade({ user }) {
   const [add_trade_offer_active, set_add_trade_offer_active] = useState(false);
   const [active_trades, set_active_trades] = useState(null);
   const [trade_offer_patches, set_trade_offer_patches] = useState({});
+  const [trade_view_active, set_trade_view_active] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:3001/get-active-trade-offers-for-user?user_id=${user.id}`)
@@ -44,22 +45,27 @@ function Trade({ user }) {
   return (
     <div>
       {add_trade_offer_active ? <AddTradeOffer user={user} set_add_trade_offer_active={set_add_trade_offer_active} /> : <></>}
+      {trade_view_active !== null ? <div user={user} set_trade_view_active={set_trade_view_active} /> : <></>}
       <h1>Märketplace</h1>
       <h3>Aktiva byten</h3>
-      {active_trades ? (active_trades.map(trade => (
-        <div className='trade_card' key={trade.id}>
-          <h4>Byte mellan {trade.sender_name} och {trade.receiver_name}</h4>
-          <ul>
-            {trade_offer_patches[trade.id] ? (
-              trade_offer_patches[trade.id].map(patch => (
-                <li key={patch.patch_id}>{patch.patch_name}</li>
-              ))
-            ) : (
-              <li>Loading pets...</li>
-            )}
-          </ul>
-        </div>
-      ))) : <></>}
+      <div style={{display: 'flex', marginBottom: '30px'}}>
+        {active_trades ? (active_trades.map(trade => (
+          <div className='trade_card' key={trade.id} onClick={() => set_trade_view_active(trade)}>
+            <h4>Byte mellan {trade.sender_name} och {trade.receiver_name}</h4>
+            <p className='small_text'>Märken i bytet:</p>
+            <ul>
+              {trade_offer_patches[trade.id] ? (
+                trade_offer_patches[trade.id].map(patch => (
+                  <li className='trade_offer_patch' key={patch.patch_id}>{patch.patch_name}</li>
+                ))
+              ) : (
+                <li>Loading pets...</li>
+              )}
+            </ul>
+            {trade.sender_id === user.id ? <div className='tag gray'>Deras tur</div> : <div className='tag green'>Din tur</div>}
+          </div>
+        ))) : <></>}
+      </div>
 
       <Button variant='contained' onClick={() => set_add_trade_offer_active(true)}>Börja byta</Button>
     </div>
