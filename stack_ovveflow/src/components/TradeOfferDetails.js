@@ -10,10 +10,27 @@ const TradeOfferDetails = ({ user, trade_content, set_trade_view_active }) => {
     } else {
       set_other_user({ name: trade_content.trade_offer.sender_name, email: trade_content.trade_offer.sender_email });
     }
-  }, []);
+  }, [trade_content, user]);
 
-  const handle_confirmed_trade = () => {
+  const handle_confirmed_trade = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/set-trade-offer-to-approved', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ trade_id: trade_content.trade_offer.id }),
+      });
 
+      if (!response.ok) {
+        throw new Error('Failed to update trade status');
+      }
+
+      const data = await response.json();
+      console.log('Update successful:', data);
+    } catch (error) {
+      console.log('An error occurred:', error.message);
+    }
   }
 
   return (
@@ -25,9 +42,9 @@ const TradeOfferDetails = ({ user, trade_content, set_trade_view_active }) => {
         {trade_content.trade_offer.approved && other_user ? <div>
           <div className='tag green'>Godkänd</div>
           <p className='small_text'>Kontakta {other_user.name} via mejl för att genomföra bytet</p>
-          <br/>
+          <br />
           <div className='tag'>{other_user.email}</div>
-          <hr/>
+          <hr />
         </div> : <></>}
 
         <div style={{ marginBottom: '30px' }}>

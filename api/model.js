@@ -33,6 +33,18 @@ const get_trade_offer_patches = async (trade_id) => {
   }
 };
 
+const set_trade_offer_to_approved = async (trade_id) => {
+  try {
+    const res = await pool.query(
+      'UPDATE trade_offer SET approved = TRUE WHERE id = $1;', [trade_id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err; 
+  }
+};
+
 const get_patches = async () => {
   try {
     const res = await pool.query('SELECT * FROM patch;');
@@ -256,6 +268,7 @@ const get_tradable_patches_for_profile = async (id) => {
 module.exports = {
   get_trade_offers_for_user,
   get_trade_offer_patches,
+  set_trade_offer_to_approved,
   get_patches,
   get_placement_categories,
   get_users,

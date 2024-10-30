@@ -91,6 +91,24 @@ app.get('/get-trade-offer-patches', async (req, res) => {
   }
 });
 
+app.put('/set-trade-offer-to-approved', async (req, res) => {
+  try {
+    const {trade_id} = req.body;  // Extract user_id from query parameters
+    if (!trade_id) {
+      return res.status(400).json({ error: 'Trade ID is required' });
+    }
+
+    const result = await ovve_model.set_trade_offer_to_approved(trade_id);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 /**
  * @swagger
  * /get-profile:
