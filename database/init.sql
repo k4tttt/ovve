@@ -311,3 +311,22 @@ JOIN patch ON patch_inventory.patch_id = patch.id;
 
 
 SELECT * FROM trade_offer WHERE approved = FALSE;
+
+
+CREATE OR REPLACE VIEW tradable_patches AS
+SELECT 
+    profile.username,
+    ovve_color.university,
+    patch.name AS patch_name,
+    patch.creator AS patch_maker,
+    patch_inventory.price AS patch_price
+FROM 
+    patch_inventory
+JOIN 
+    profile ON patch_inventory.profile_id = profile.id
+JOIN 
+    ovve_color ON profile.color = ovve_color.id
+JOIN 
+    patch ON patch_inventory.patch_id = patch.id
+WHERE 
+    patch_inventory.tradable = TRUE;
