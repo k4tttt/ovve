@@ -546,10 +546,10 @@ app.post('/create-user', async (req, res) => {
  */
 app.post('/create-inventory', async (req, res) => {
   try {
-    const { patch_id, profile_id, price, obtained_date, lost_date, obtained_from } = req.body;
+    const { patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable } = req.body;
 
     const result = await ovve_model.create_inventory({
-      patch_id, profile_id, price, obtained_date, lost_date, obtained_from
+      patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable
     });
 
     res.status(201).json({

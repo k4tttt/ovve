@@ -161,16 +161,16 @@ const create_user = async (userData) => {
 
 const create_inventory = async (userData) => {
   const {
-    patch_id, profile_id, price, obtained_date, lost_date, obtained_from
+    patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable
   } = userData;
 
   try {
     // Insert inventory into the patch_inventory table
     const res = await pool.query(
-      `INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from)
-      VALUES ($1, $2, $3, $4, $5, $6)
+      `INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
       RETURNING id;`,
-      [patch_id, profile_id, price, obtained_date, lost_date, obtained_from]
+      [patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable]
     );
 
     return res.rows[0]; 
