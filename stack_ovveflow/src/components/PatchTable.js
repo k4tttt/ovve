@@ -1,33 +1,38 @@
 import React, { useState } from 'react';
+import { IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 
-const PatchTable = ({ sewnPatches, notSewnPatches, tradePatches, format_date }) => {
-  const [selectedCategory, setSelectedCategory] = useState('Sydda märken');
+const PatchTable = ({ sewn_patches, not_sewn_patches, trade_patches, format_date, is_owner }) => {
+  const [selected_category, set_selected_category] = useState('Alla märken');
 
-  // Helper to get patches based on the selected category
-  const getPatches = () => {
-    switch (selectedCategory) {
+  const get_patches = () => {
+    switch (selected_category) {
       case 'Alla märken':
-        return [...sewnPatches, ...notSewnPatches];
+        return [...sewn_patches, ...not_sewn_patches];
       case 'Sydda märken':
-        return sewnPatches;
+        return sewn_patches;
       case 'Osydda märken':
-        return notSewnPatches;
+        return not_sewn_patches;
       case 'Bytesmärken':
-        return tradePatches;
+        return trade_patches;
       default:
         return [];
     }
   };
 
+  const handle_edit_patch = (patch) => {
+    console.log(`Editing patch: ${patch.name}`);
+  };
+
   return (
     <div className='patch_table'>
-      <h3>{selectedCategory}</h3>
+      <h3>{selected_category}</h3>
       <div className='category_buttons'>
-        {['Sydda märken', 'Alla märken', 'Osydda märken', 'Bytesmärken'].map((category) => (
+        {['Alla märken', 'Sydda märken', 'Osydda märken', 'Bytesmärken'].map((category) => (
           <button
             key={category}
-            onClick={() => setSelectedCategory(category)}
-            className={category === selectedCategory ? 'active' : ''}
+            onClick={() => set_selected_category(category)}
+            className={category === selected_category ? 'active' : ''}
           >
             {category}
           </button>
@@ -37,6 +42,7 @@ const PatchTable = ({ sewnPatches, notSewnPatches, tradePatches, format_date }) 
       <table>
         <thead>
           <tr>
+            {is_owner && <th style={{ width: '40px' }}>Edit</th>}
             <th>Märke</th>
             <th>Skapare</th>
             <th>Införskaffad</th>
@@ -46,8 +52,15 @@ const PatchTable = ({ sewnPatches, notSewnPatches, tradePatches, format_date }) 
           </tr>
         </thead>
         <tbody>
-          {getPatches().map((patch, index) => (
+          {get_patches().map((patch, index) => (
             <tr key={index}>
+              {is_owner && (
+                <td>
+                  <IconButton aria-label="edit" onClick={() => handle_edit_patch(patch)}>
+                    <EditIcon />
+                  </IconButton>
+                </td>
+              )}
               <td>{patch.name}</td>
               <td>{patch.creator}</td>
               <td>{format_date(patch.obtained_date)}</td>

@@ -87,8 +87,8 @@ const Profile = ({ user }) => {
     }
   }, [user_data]);  
 
-  const format_date = (dateString) => {
-    const date = new Date(dateString);
+  const format_date = (date_string) => {
+    const date = new Date(date_string);
     return date.toLocaleDateString('en-GB', {
       day: 'numeric',
       month: 'short',
@@ -96,12 +96,12 @@ const Profile = ({ user }) => {
     });
   };
 
-  const convert_to_upper_case = (inputString) => {
-    return inputString.toUpperCase();
+  const convert_to_upper_case = (input_string) => {
+    return input_string.toUpperCase();
   };
 
-  const convert_to_lower_case = (inputString) => {
-    return inputString.toLowerCase();
+  const convert_to_lower_case = (input_string) => {
+    return input_string.toLowerCase();
   };
 
   return (
@@ -168,12 +168,6 @@ const Profile = ({ user }) => {
           <div className='tag'>{format_date(current_time)}</div>
           <div className='timeline_overview' style={{ display: 'flex', marginBottom: '30px' }}>
             <table>
-              {/* <thead>
-                <tr>
-                  <th>Stat</th>
-                  <th>Antal</th>
-                </tr>
-              </thead> */}
               <tbody>
                 <tr>
                   <td>Sydda märken</td>
@@ -212,10 +206,11 @@ const Profile = ({ user }) => {
           {user_sewn_patches && user_not_sewn_patches ? (
             <div>
               <PatchTable 
-                sewnPatches={user_sewn_patches} 
-                notSewnPatches={user_not_sewn_patches} 
-                tradePatches={user_trade_patches}  // replace with actual data
-                format_date={format_date} 
+                sewn_patches={user_sewn_patches}
+                not_sewn_patches={user_not_sewn_patches}
+                trade_patches={user_trade_patches}
+                format_date={format_date}
+                is_owner={user.username === username}
               />
             </div>
           ) : null}
