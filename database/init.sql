@@ -157,7 +157,10 @@ SELECT
   p_c.name AS category,
   p_s.TST,
   p_s.TET,
-  placement_category.name AS placement_category
+  placement_category.name AS placement_category,
+  p_s.sewn_on,
+  p_i.tradable,
+  p_s.placement
 FROM
   patch_status p_s
 JOIN patch_inventory p_i ON p_s.patch = p_i.id
@@ -179,7 +182,10 @@ SELECT
   p_c.name AS category,
   p_s.TST,
   p_s.TET,
-  placement_category.name AS placement_category
+  placement_category.name AS placement_category,
+  p_s.sewn_on,
+  p_i.tradable,
+  p_s.placement
 FROM
   patch_status p_s
 JOIN patch_inventory p_i ON p_s.patch = p_i.id
