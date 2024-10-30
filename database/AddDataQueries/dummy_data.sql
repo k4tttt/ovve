@@ -145,6 +145,8 @@ VALUES
 
 SELECT * FROM placement_category;
 
+SELECT * FROM profile;
+
 INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from)
 VALUES
 (19, 3, 0, '2024-05-14', '9999-12-31', 'Idag&Inatt'),
@@ -157,15 +159,15 @@ SELECT * FROM patch_inventory JOIN patch ON patch.id = patch_inventory.patch_id;
 
 INSERT INTO patch_status (TST, TET, sewn_on, placement, patch)
 VALUES
-('2024-05-14', '2024-08-17', FALSE, 1, 1),
-('2024-08-17', '9999-12-31', TRUE, 4, 1),
-('2022-03-10', '9999-12-31', TRUE, 5, 2),
-('2022-10-05', '2022-10-15', FALSE, 1, 3),
-('2022-10-15', '9999-12-31', TRUE, 5, 3),
-('2022-11-10', '2022-11-30', FALSE, 1, 4),
-('2022-11-30', '9999-12-31', TRUE, 4, 4),
-('2023-05-21', '2023-09-10', FALSE, 1, 5),
-('2023-09-10', '9999-12-31', TRUE, 5, 5);
+('2024-05-14', '2024-08-17', FALSE, 1, 8),
+('2024-08-17', '9999-12-31', TRUE, 4, 8),
+('2022-03-10', '9999-12-31', TRUE, 5, 9),
+('2022-10-05', '2022-10-15', FALSE, 1, 10),
+('2022-10-15', '9999-12-31', TRUE, 5, 10),
+('2022-11-10', '2022-11-30', FALSE, 1, 11),
+('2022-11-30', '9999-12-31', TRUE, 4, 11),
+('2023-05-21', '2023-09-10', FALSE, 1, 12),
+('2023-09-10', '9999-12-31', TRUE, 5, 12);
 
 SELECT * FROM patch_status WHERE sewn_on = TRUE;
 
@@ -180,6 +182,8 @@ VALUES
 (1, 3, FALSE),
 (2, 3, FALSE);
 
+UPDATE trade_offer SET approved = TRUE WHERE id = 1;
+
 SELECT * FROM trade_offer WHERE sending_profile_id = 1 OR recieving_profile_id = 1 AND approved = FALSE;
 SELECT * FROM patch_inventory WHERE profile_id = 1;
 
@@ -187,4 +191,5 @@ INSERT INTO trade_offer_patch (trade_offer_id, owning_profile, patch)
 VALUES
 (1, 1, 6),
 (1, 1, 7),
+(1, 3, 8),
 (2, 1, 7);

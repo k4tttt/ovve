@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import AddTradeOffer from './AddTradeOffer';
+import TradeOfferDetails from './TradeOfferDetails';
 
 function Trade({ user }) {
   const [add_trade_offer_active, set_add_trade_offer_active] = useState(false);
@@ -45,14 +46,13 @@ function Trade({ user }) {
   return (
     <div>
       {add_trade_offer_active ? <AddTradeOffer user={user} set_add_trade_offer_active={set_add_trade_offer_active} /> : <></>}
-      {trade_view_active !== null ? <div user={user} set_trade_view_active={set_trade_view_active} /> : <></>}
+      {trade_view_active !== null ? <TradeOfferDetails trade_content={trade_view_active} user={user} set_trade_view_active={set_trade_view_active} /> : <></>}
       <h1>Märketplace</h1>
       <h3>Aktiva byten</h3>
       <div style={{display: 'flex', marginBottom: '30px'}}>
         {active_trades ? (active_trades.map(trade => (
-          <div className='trade_card' key={trade.id} onClick={() => set_trade_view_active(trade)}>
+          <div className='trade_card' key={trade.id} onClick={() => set_trade_view_active({trade_offer: trade, trade_offer_patches: trade_offer_patches[trade.id]})}>
             <h4>Byte mellan {trade.sender_name} och {trade.receiver_name}</h4>
-            <p className='small_text'>Märken i bytet:</p>
             <ul>
               {trade_offer_patches[trade.id] ? (
                 trade_offer_patches[trade.id].map(patch => (
@@ -66,6 +66,8 @@ function Trade({ user }) {
           </div>
         ))) : <></>}
       </div>
+
+      <h3>Godkända byten</h3>
 
       <Button variant='contained' onClick={() => set_add_trade_offer_active(true)}>Börja byta</Button>
     </div>

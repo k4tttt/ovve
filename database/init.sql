@@ -301,7 +301,8 @@ SELECT
   patch.id AS patch_id,
   patch.name AS patch_name,
   patch.creator AS patch_creator,
-  patch_inventory.price AS patch_price
+  patch_inventory.price AS patch_price,
+  patch_inventory.tradable AS tradeable
 FROM
   trade_offer_patch
 JOIN profile owner ON trade_offer_patch.owning_profile = owner.id
