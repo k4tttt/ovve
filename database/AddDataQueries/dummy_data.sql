@@ -147,13 +147,13 @@ SELECT * FROM placement_category;
 
 SELECT * FROM profile;
 
-INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from)
+INSERT INTO patch_inventory (patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable)
 VALUES
-(19, 3, 0, '2024-05-14', '9999-12-31', 'Idag&Inatt'),
-(20, 3, 20, '2022-03-10', '9999-12-31', 'IndivID'),
-(30, 3, 20, '2022-10-05', '9999-12-31', 'NTK'),
-(57, 3, 20, '2022-11-10', '9999-12-31', 'Piraya'),
-(47, 3, 0, '2023-05-21', '9999-12-31', 'IndivID');
+(19, 3, 0, '2024-05-14', '9999-12-31', 'Idag&Inatt', FALSE),
+(20, 3, 20, '2022-03-10', '9999-12-31', 'IndivID', TRUE),
+(30, 3, 20, '2022-10-05', '9999-12-31', 'NTK', FALSE),
+(57, 3, 20, '2022-11-10', '9999-12-31', 'Piraya', FALSE),
+(47, 3, 0, '2023-05-21', '9999-12-31', 'IndivID', TRUE);
 
 SELECT * FROM patch_inventory JOIN patch ON patch.id = patch_inventory.patch_id;
 
