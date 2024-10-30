@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Autocomplete, Button, TextField, Checkbox, FormControlLabel, MenuItem } from '@mui/material';
+import { Button } from '@mui/material';
 
 const TradeOfferDetails = ({ user, trade_content, set_trade_view_active }) => {
+  const [other_user, set_other_user] = useState(null);
+
   useEffect(() => {
-    console.log(trade_content);
+    if (trade_content.trade_offer.sender_name === user.username) {
+      set_other_user({ name: trade_content.trade_offer.receiver_name, email: trade_content.trade_offer.receiver_email });
+    } else {
+      set_other_user({ name: trade_content.trade_offer.sender_name, email: trade_content.trade_offer.sender_email });
+    }
   }, []);
 
   const handle_confirmed_trade = () => {
-    
+
   }
 
   return (
@@ -15,6 +21,14 @@ const TradeOfferDetails = ({ user, trade_content, set_trade_view_active }) => {
       <div className='overlay' onClick={() => set_trade_view_active(null)}></div>
       <div className='add_patch'>
         <h3>Byte mellan {trade_content.trade_offer.sender_name} och {trade_content.trade_offer.receiver_name}</h3>
+
+        {trade_content.trade_offer.approved && other_user ? <div>
+          <div className='tag green'>Godkänd</div>
+          <p className='small_text'>Kontakta {other_user.name} via mejl för att genomföra bytet</p>
+          <br/>
+          <div className='tag'>{other_user.email}</div>
+          <hr/>
+        </div> : <></>}
 
         <div style={{ marginBottom: '30px' }}>
           <h4>{trade_content.trade_offer.sender_name} vill byta</h4>

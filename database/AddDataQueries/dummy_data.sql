@@ -182,7 +182,7 @@ VALUES
 (1, 3, FALSE),
 (2, 3, FALSE);
 
-UPDATE trade_offer SET approved = TRUE WHERE id = 1;
+UPDATE trade_offer SET approved = FALSE WHERE id = 1;
 
 SELECT * FROM trade_offer WHERE sending_profile_id = 1 OR recieving_profile_id = 1 AND approved = FALSE;
 SELECT * FROM patch_inventory WHERE profile_id = 1;
