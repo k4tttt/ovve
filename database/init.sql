@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS tradable_patches;
 DROP VIEW IF EXISTS trade_offer_patches_view;
 DROP VIEW IF EXISTS trade_offer_view;
 DROP TABLE IF EXISTS trade_offer_patch;
@@ -18,7 +19,6 @@ DROP TABLE IF EXISTS profile;
 DROP TABLE IF EXISTS ovve_type;
 DROP TABLE IF EXISTS ovve_color;
 DROP FUNCTION IF EXISTS status_update;
-
 
 CREATE TABLE ovve_color (
     id SERIAL PRIMARY KEY,
