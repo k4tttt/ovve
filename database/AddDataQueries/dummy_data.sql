@@ -156,7 +156,12 @@ VALUES
 (47, 3, 0, '2023-05-21', '9999-12-31', 'IndivID', TRUE);
 
 SELECT * FROM patch_inventory JOIN patch ON patch.id = patch_inventory.patch_id;
+SELECT * FROM patch_inventory;
+SELECT * FROM patch_status;
+SELECT * FROM trade_offer;
 
+
+SELECT * FROM profile;
 INSERT INTO patch_status (TST, TET, sewn_on, placement, patch)
 VALUES
 ('2024-05-14', '2024-08-17', FALSE, 1, 8),
@@ -175,7 +180,7 @@ SELECT * FROM patch_sewn_view;
 SELECT * FROM profile;
 SELECT * FROM patch_not_sewn_view;
 
-INSERT INTO trade_offer (sending_profile_id, recieving_profile_id, approved)
+INSERT INTO trade_offer (sending_profile_id, receiving_profile_id, approved)
 VALUES
 (1, 3, FALSE),
 (1, 2, FALSE),
@@ -184,7 +189,7 @@ VALUES
 
 UPDATE trade_offer SET approved = FALSE WHERE id = 1;
 
-SELECT * FROM trade_offer WHERE sending_profile_id = 1 OR recieving_profile_id = 1 AND approved = FALSE;
+SELECT * FROM trade_offer WHERE sending_profile_id = 1 OR receiving_profile_id = 1 AND approved = FALSE;
 SELECT * FROM patch_inventory WHERE profile_id = 1;
 
 INSERT INTO trade_offer_patch (trade_offer_id, owning_profile, patch)
