@@ -33,10 +33,51 @@ const get_trade_offer_patches = async (trade_id) => {
   }
 };
 
+const get_trade_offer = async (trade_id) => {
+  try {
+    const trade_offer = await pool.query(
+      'SELECT t_o.id, t_o.approved, t_o.receiving_profile_id, t_o.sending_profile_id, p.username AS sending_profile_username FROM trade_offer t_o JOIN profile p ON p.id = t_o.sending_profile_id WHERE t_o.id = $1;', [trade_id]
+    );
+    console.log(trade_offer.rows[0]);
+
+    const sending_profile_patches = await pool.query(
+      'SELECT p_i.id AS patch_inventory_id, p.name AS patch_name FROM trade_offer_patch t_o_p JOIN patch_inventory p_i ON p_i.id = t_o_p.patch JOIN patch p ON p.id = p_i.patch_id WHERE t_o_p.trade_offer_id = $1 AND t_o_p.owning_profile = $2 ORDER BY p.name ASC;', 
+      [trade_id, trade_offer.rows[0].sending_profile_id]
+    );
+    //console.log(sending_profile_patches);
+
+    const receiving_profile_patches = await pool.query(
+      'SELECT p_i.id AS patch_inventory_id, p.name AS patch_name FROM trade_offer_patch t_o_p JOIN patch_inventory p_i ON p_i.id = t_o_p.patch JOIN patch p ON p.id = p_i.patch_id WHERE t_o_p.trade_offer_id = $1 AND t_o_p.owning_profile = $2 ORDER BY p.name ASC;', 
+      [trade_id, trade_offer.rows[0].receiving_profile_id]
+    );
+    //console.log(receiving_profile_patches);
+
+    const res = { ...trade_offer.rows[0], sending_profile_patches: sending_profile_patches.rows, receiving_profile_patches: receiving_profile_patches.rows };
+
+    console.log(res);
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  }
+};
+
 const set_trade_offer_to_approved = async (trade_id) => {
   try {
     const res = await pool.query(
       'UPDATE trade_offer SET approved = TRUE WHERE id = $1;', [trade_id]
+    );
+    return res;
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  }
+};
+
+const set_trade_offer_to_denied = async (trade_id) => {
+  try {
+    const res = await pool.query(
+      'UPDATE trade_offer SET approved = FALSE WHERE id = $1;', [trade_id]
     );
     return res;
   } catch (err) {
@@ -51,6 +92,34 @@ const create_trade_offer = async (tradeOfferData) => {
   } = tradeOfferData;
 
   try {
+    await pool.query(
+      `SELECT insert_trade_offer($1, $2::INT[], $3, $4::INT[]);`,
+      [receiving_profile_id, receiving_profile_patch_ids, sending_profile_id, sending_profile_patch_ids]
+    );
+
+    return { message: "Trade offer created successfully" };
+  } catch (err) {
+    console.error('Error inserting trade offer:', err);
+    throw err;
+  }
+};
+
+const edit_trade_offer = async (tradeOfferData) => {
+  const {
+    trade_offer_id, sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids
+  } = tradeOfferData;
+
+  try {
+    await pool.query(
+      `DELETE FROM trade_offer_patch WHERE trade_offer_id = $1;`,
+      [trade_offer_id]
+    );
+
+    await pool.query(
+      `DELETE FROM trade_offer WHERE id = $1;`,
+      [trade_offer_id]
+    );
+
     await pool.query(
       `SELECT insert_trade_offer($1, $2::INT[], $3, $4::INT[]);`,
       [receiving_profile_id, receiving_profile_patch_ids, sending_profile_id, sending_profile_patch_ids]
@@ -297,8 +366,11 @@ const get_all_trade_patches = async () => {
 module.exports = {
   get_trade_offers_for_user,
   get_trade_offer_patches,
+  get_trade_offer,
   set_trade_offer_to_approved,
+  set_trade_offer_to_denied,
   create_trade_offer,
+  edit_trade_offer,
   get_patches,
   get_placement_categories,
   get_users,

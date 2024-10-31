@@ -91,6 +91,25 @@ app.get('/get-trade-offer-patches', async (req, res) => {
   }
 });
 
+app.get('/get-trade-offer', async (req, res) => {
+  try {
+    const { trade_id } = req.query; 
+
+    if (!trade_id) {
+      return res.status(400).json({ error: 'Trade ID is required' });
+    }
+
+    const result = await ovve_model.get_trade_offer(trade_id);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
 app.put('/set-trade-offer-to-approved', async (req, res) => {
   try {
     const { trade_id } = req.body;  // Extract user_id from query parameters
@@ -99,6 +118,24 @@ app.put('/set-trade-offer-to-approved', async (req, res) => {
     }
 
     const result = await ovve_model.set_trade_offer_to_approved(trade_id);
+    res.status(200).json({
+      message: "Connection successful",
+      result: result.rows,  // Return the rows fetched by the query
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+app.put('/set-trade-offer-to-denied', async (req, res) => {
+  try {
+    const { trade_id } = req.body;  // Extract user_id from query parameters
+    if (!trade_id) {
+      return res.status(400).json({ error: 'Trade ID is required' });
+    }
+
+    const result = await ovve_model.set_trade_offer_to_denied(trade_id);
     res.status(200).json({
       message: "Connection successful",
       result: result.rows,  // Return the rows fetched by the query
@@ -149,6 +186,22 @@ app.post('/create-trade-offer', async (req, res) => {
 
     const result = await ovve_model.create_trade_offer({
       sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids
+    });
+    res.status(200).json(result); // Sending success message
+  } catch (err) {
+    res.status(500).json({
+      message: "Error creating trade offer",
+      error: err.message
+    });
+  }
+});
+
+app.post('/edit-trade-offer', async (req, res) => {
+  try {
+    const { trade_offer_id, sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids } = req.body;
+
+    const result = await ovve_model.edit_trade_offer({
+      trade_offer_id, sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids
     });
     res.status(200).json(result); // Sending success message
   } catch (err) {

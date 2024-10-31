@@ -1,13 +1,37 @@
 import { useEffect, useState } from 'react';
 import { Autocomplete, Button, TextField } from '@mui/material';
 
-const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
-  const [users, set_users] = useState([]);
-  const [selected_user, set_selected_user] = useState(null);
+const CounterOffer = ({ user, trade_id, set_counter_offer_active }) => {
+  const [selected_user, set_selected_user] = useState({username: '', id: null});
   const [tradable_patches, set_tradable_patches] = useState([]);
   const [logged_in_user_patches, set_logged_in_user_patches] = useState([]);
   const [selected_receiving_patches, set_selected_receiving_patches] = useState([{ patch_name: '', patch_inventory_id: null }]);
   const [selected_giving_patches, set_selected_giving_patches] = useState([{ patch_name: '', patch_inventory_id: null }]);
+  const [prev_selected_receiving_patches, set_prev_selected_receiving_patches] = useState([]);
+  const [prev_selected_giving_patches, set_prev_selected_giving_patches] = useState([]);
+
+  useEffect(() => {
+    fetch(`http://localhost:3001/get-trade-offer?trade_id=${trade_id}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.result);
+
+        set_selected_user({username: data.result.sending_profile_username, id: data.result.sending_profile_id});
+        set_selected_receiving_patches(data.result.sending_profile_patches);
+        set_selected_giving_patches(data.result.receiving_profile_patches);
+        set_prev_selected_receiving_patches(data.result.sending_profile_patches.map(patch => patch.patch_inventory_id));
+        set_prev_selected_giving_patches(data.result.receiving_profile_patches.map(patch => patch.patch_inventory_id));
+      })
+      .catch((error) => {
+        console.log("ERROR when fetching trade offer: " + error);
+      });
+  }, [trade_id]);
+
 
   useEffect(() => {
     fetch(`http://localhost:3001/get-tradable-patches-for-profile/${user.id}`)
@@ -18,6 +42,7 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
         return response.json();
       })
       .then((data) => {
+        console.log(data.result);
         set_logged_in_user_patches(data.result);
       })
       .catch((error) => {
@@ -26,24 +51,8 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
   }, [user]);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/get-users`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        set_users(data.result);
-      })
-      .catch((error) => {
-        console.log("ERROR when fetching users: " + error);
-      });
-  }, []);
-
-  useEffect(() => {
-    set_selected_receiving_patches([{ patch_name: '', patch_inventory_id: null }]);
     if (selected_user) {
+      console.log("selected user" + selected_user);
       fetch(`http://localhost:3001/get-tradable-patches-for-profile/${selected_user.id}`)
         .then((response) => {
           if (!response.ok) {
@@ -58,7 +67,7 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
           console.log("ERROR when fetching users: " + error);
         });
     } else {
-      set_tradable_patches([]);
+      console.log("no selected user");
     }
   }, [selected_user]);
 
@@ -66,6 +75,7 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
     e.preventDefault();
     try {
       const request_body = {
+        trade_offer_id: trade_id,
         sending_profile_id: user.id,
         receiving_profile_id: selected_user.id,
         sending_profile_patch_ids: selected_giving_patches
@@ -76,7 +86,9 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
           .filter(id => id !== null),
       };
 
-      const response = await fetch('http://localhost:3001/create-trade-offer', {
+      console.log(request_body);
+
+      const response = await fetch('http://localhost:3001/edit-trade-offer', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,11 +102,12 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
     } catch (error) {
       console.log('An error occurred:', error.message);
     }
+    set_counter_offer_active(null);
   };
 
   return (
     <div>
-      <div className='overlay' onClick={() => set_add_trade_offer_active(false)}></div>
+      <div className='overlay' onClick={() => set_counter_offer_active(false)}></div>
       <form className='add_patch'>
         <h3>Börja byta</h3>
 
@@ -152,31 +165,17 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Autocomplete
-              options={users}
-              getOptionLabel={(option) => option.username}
-              value={selected_user}
-              onChange={(event, new_value) => set_selected_user(new_value)}
-              renderOption={(props, option) => {
-                const { key, ...otherProps } = props; // Destructure `key` from `props`
-                return (
-                  <li key={key} {...otherProps}>
-                    {option.username}
-                  </li>
-                );
+            <TextField
+              value={selected_user.username}
+              disabled
+              sx={{
+                '& .MuiInputBase-input.Mui-disabled': {
+                  color: 'rgba(0, 0, 0, 0.87)', // Set to the same color as enabled text field
+                  WebkitTextFillColor: 'rgba(0, 0, 0, 0.87)', // Required for Safari
+                },
+                margin: '8px',
+                width: '300px'
               }}
-              filterOptions={(options, { inputValue }) => {
-                return options.filter(option => {
-                  const lowerInputValue = inputValue.toLowerCase();
-                  return (
-                    option.username.toLowerCase().includes(lowerInputValue)
-                  );
-                });
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label="Användare" variant="outlined" required />
-              )}
-              sx={{ margin: '8px', width: 300 }}
             />
 
             {selected_receiving_patches.map((patch, index) => (
@@ -222,4 +221,4 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
   );
 }
 
-export default AddTradeOffer;
+export default CounterOffer;
