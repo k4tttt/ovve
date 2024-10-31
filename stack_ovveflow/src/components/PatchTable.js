@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 
+import EditPatch from './EditPatch';
+
 const PatchTable = ({ sewn_patches, not_sewn_patches, trade_patches, format_date, is_owner }) => {
   const [selected_category, set_selected_category] = useState('Alla märken');
+  const [edit_view_active, set_edit_view_active] = useState(null);
 
   const get_patches = () => {
     switch (selected_category) {
@@ -21,11 +24,12 @@ const PatchTable = ({ sewn_patches, not_sewn_patches, trade_patches, format_date
   };
 
   const handle_edit_patch = (patch) => {
-    console.log(`Editing patch: ${patch.name}`);
+    console.log(patch);
   };
 
   return (
     <div className='patch_table'>
+      {edit_view_active !== null ? <EditPatch patch={edit_view_active} set_edit_view_active={set_edit_view_active} /> : <></>}
       <h3>{selected_category}</h3>
       <div className='category_buttons'>
         {['Alla märken', 'Sydda märken', 'Osydda märken', 'Bytesmärken'].map((category) => (
@@ -56,7 +60,7 @@ const PatchTable = ({ sewn_patches, not_sewn_patches, trade_patches, format_date
             <tr key={index}>
               {is_owner && (
                 <td>
-                  <IconButton aria-label="edit" onClick={() => handle_edit_patch(patch)}>
+                  <IconButton aria-label="edit" onClick={() => set_edit_view_active(patch)}>
                     <EditIcon />
                   </IconButton>
                 </td>
