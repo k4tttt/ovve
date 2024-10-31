@@ -57,7 +57,7 @@ app.get('/test-connection', async (req, res) => {
 
 app.get('/get-trade-offers-for-user', async (req, res) => {
   try {
-    const {user_id} = req.query;  // Extract user_id from query parameters
+    const { user_id } = req.query;  // Extract user_id from query parameters
     if (!user_id) {
       return res.status(400).json({ error: 'User ID is required' });
     }
@@ -75,7 +75,7 @@ app.get('/get-trade-offers-for-user', async (req, res) => {
 
 app.get('/get-trade-offer-patches', async (req, res) => {
   try {
-    const {trade_id} = req.query;  // Extract user_id from query parameters
+    const { trade_id } = req.query;  // Extract user_id from query parameters
     if (!trade_id) {
       return res.status(400).json({ error: 'Trade ID is required' });
     }
@@ -93,7 +93,7 @@ app.get('/get-trade-offer-patches', async (req, res) => {
 
 app.put('/set-trade-offer-to-approved', async (req, res) => {
   try {
-    const {trade_id} = req.body;  // Extract user_id from query parameters
+    const { trade_id } = req.body;  // Extract user_id from query parameters
     if (!trade_id) {
       return res.status(400).json({ error: 'Trade ID is required' });
     }
@@ -106,6 +106,56 @@ app.put('/set-trade-offer-to-approved', async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Connection failed', details: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /create-trade-offer:
+ *   post:
+ *     summary: Create a new trade offer between profiles.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               sending_profile_id:
+ *                 type: integer
+ *                 example: 1
+ *               receiving_profile_id:
+ *                 type: integer
+ *                 example: 2
+ *               sending_profile_patch_ids:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [3, 5, 7]
+ *               receiving_profile_patch_ids:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [8, 10, 12]
+ *     responses:
+ *       200:
+ *         description: Trade offer created successfully.
+ *       500:
+ *         description: Server error.
+ */
+app.post('/create-trade-offer', async (req, res) => {
+  try {
+    const { sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids } = req.body;
+
+    const result = await ovve_model.create_trade_offer({
+      sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids
+    });
+    res.status(200).json(result); // Sending success message
+  } catch (err) {
+    res.status(500).json({
+      message: "Error creating trade offer",
+      error: err.message
+    });
   }
 });
 
