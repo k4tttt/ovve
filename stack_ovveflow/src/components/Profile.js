@@ -109,7 +109,7 @@ const Profile = ({ user }) => {
       {user_data ? <div id="profile">
         {add_patch_view_active ? <AddPatch user={user} set_add_patch_view_active={set_add_patch_view_active} /> : <></>}
         <div className='profile_details'>
-          <div className='profile_picture'></div>
+          <img className='profile_picture' src='/profile.jpg'></img>
           <div className='profile_info'>
             <div>
               <p className='small_text'>Användarnamn</p>
