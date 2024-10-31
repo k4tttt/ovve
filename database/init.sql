@@ -19,6 +19,7 @@ DROP TABLE IF EXISTS profile;
 DROP TABLE IF EXISTS ovve_type;
 DROP TABLE IF EXISTS ovve_color;
 DROP FUNCTION IF EXISTS status_update;
+DROP FUNCTION IF EXISTS insert_trade_offer;
 
 CREATE TABLE ovve_color (
     id SERIAL PRIMARY KEY,
@@ -273,7 +274,7 @@ EXECUTE FUNCTION status_update();
 CREATE TABLE trade_offer (
     id SERIAL PRIMARY KEY,
     sending_profile_id INTEGER REFERENCES profile(id),
-    recieving_profile_id INTEGER REFERENCES profile(id),
+    receiving_profile_id INTEGER REFERENCES profile(id),
     approved BOOLEAN
 );
 
@@ -296,7 +297,7 @@ SELECT
 FROM
   trade_offer
 JOIN profile sender ON trade_offer.sending_profile_id = sender.id
-JOIN profile receiver ON trade_offer.recieving_profile_id = receiver.id;
+JOIN profile receiver ON trade_offer.receiving_profile_id = receiver.id;
 
 CREATE OR REPLACE VIEW trade_offer_patches_view AS
 SELECT
@@ -337,3 +338,28 @@ JOIN
 WHERE 
     patch_inventory.tradable = TRUE
     AND patch_inventory.lost_date = '9999-12-31';
+
+
+
+CREATE OR REPLACE FUNCTION insert_trade_offer(
+    r_profile_id INT,
+    r_profiles_patches INT[],
+    s_profile_id INT,
+    s_profiles_patches INT[]
+) RETURNS VOID AS $$
+BEGIN
+    INSERT INTO trade_offer (sending_profile_id, receiving_profile_id, approved)
+    VALUES (s_profile_id, r_profile_id, NULL);
+    
+    INSERT INTO trade_offer_patch (owning_profile, patch)
+    SELECT r_profile_id, unnest(r_profiles_patches);
+    
+    INSERT INTO trade_offer_patch (owning_profile, patch)
+    SELECT s_profile_id, unnest(s_profiles_patches);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE NOTICE 'Transaction failed: %', SQLERRM;
+        RAISE; 
+END;
+$$ LANGUAGE plpgsql;

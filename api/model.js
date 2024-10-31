@@ -17,7 +17,7 @@ const get_trade_offers_for_user = async (user_id) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -29,7 +29,7 @@ const get_trade_offer_patches = async (trade_id) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -41,7 +41,25 @@ const set_trade_offer_to_approved = async (trade_id) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
+  }
+};
+
+const create_trade_offer = async (tradeOfferData) => {
+  const {
+    sending_profile_id, receiving_profile_id, sending_profile_patch_ids, receiving_profile_patch_ids
+  } = tradeOfferData;
+
+  try {
+    await pool.query(
+      `SELECT insert_trade_offer($1, $2::INT[], $3, $4::INT[]);`,
+      [receiving_profile_id, receiving_profile_patch_ids, sending_profile_id, sending_profile_patch_ids]
+    );
+
+    return { message: "Trade offer created successfully" };
+  } catch (err) {
+    console.error('Error inserting trade offer:', err);
+    throw err;
   }
 };
 
@@ -112,17 +130,17 @@ const get_profile_by_username = async (username) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
 const get_password_by_username = async (username) => {
   try {
     const res = await pool.query('SELECT password, id FROM profile WHERE username = $1;', [username]);
-    return res.rows[0]; 
+    return res.rows[0];
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -140,13 +158,13 @@ const create_user = async (userData) => {
       [username, password, ovve_name, purchase_date, inauguration_date, biography, color, type, email]
     );
 
-    return res.rows[0]; 
+    return res.rows[0];
   } catch (err) {
     console.error('Error inserting profile:', err);
 
     // Error due to email format constraint
     if (err.message.includes('email_format_check')) {
-      throw new Error('Invalid email format'); 
+      throw new Error('Invalid email format');
     }
 
     // Error due to username uniqueness trigger
@@ -173,7 +191,7 @@ const create_inventory = async (userData) => {
       [patch_id, profile_id, price, obtained_date, lost_date, obtained_from, tradable]
     );
 
-    return res.rows[0]; 
+    return res.rows[0];
   } catch (err) {
     console.error('Error inserting inventory:', err);
 
@@ -195,7 +213,7 @@ const create_status = async (userData) => {
       [TST, TET, sewn_on, placement, patch]
     );
 
-    return res.rows[0]; 
+    return res.rows[0];
   } catch (err) {
     console.error('Error inserting status:', err);
 
@@ -211,7 +229,7 @@ const get_sewn_patches_for_profile_by_date = async (user_id, date) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -223,7 +241,7 @@ const get_not_sewn_patches_for_profile_by_date = async (user_id, date) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -247,7 +265,7 @@ const get_tradable_patches_for_profile = async (id) => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -257,7 +275,7 @@ const get_all_trade_patches = async () => {
     return res;
   } catch (err) {
     console.error('Error executing query', err);
-    throw err; 
+    throw err;
   }
 };
 
@@ -280,6 +298,7 @@ module.exports = {
   get_trade_offers_for_user,
   get_trade_offer_patches,
   set_trade_offer_to_approved,
+  create_trade_offer,
   get_patches,
   get_placement_categories,
   get_users,
