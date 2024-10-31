@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Button, TextField, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
+import { Button, TextField, FormControl, RadioGroup, Radio, FormControlLabel, Checkbox, MenuItem } from '@mui/material';
+import EditPatchInventory from './EditPatchInventory';
+import EditPatchStatus from './EditPatchStatus';
 
 const EditPatch = ({ patch, set_edit_view_active }) => {
   const [placement_categories, set_placement_categories] = useState([]);
+  const [edit_type, set_edit_type] = useState('inventory');
 
   console.log(patch);
 
@@ -46,8 +49,20 @@ const EditPatch = ({ patch, set_edit_view_active }) => {
   return (
     <div>
       <div className='overlay' onClick={() => set_edit_view_active(null)}></div>
-      <form className='add_patch'>
+      <div className='add_patch'>
         <h3>Redigera märke</h3>
+
+        <FormControl>
+          <RadioGroup
+            aria-labelledby="demo-radio-buttons-group-label"
+            name="radio-buttons-group"
+            defaultValue={'inventory'}
+            row
+          >
+            <FormControlLabel value={'inventory'} control={<Radio />} onChange={() => set_edit_type('inventory')} label="Detaljer om märket" />
+            <FormControlLabel value={'status'} control={<Radio />} onChange={() => set_edit_type('status')} label="Märkets sy-status" />
+          </RadioGroup>
+        </FormControl>
 
         <div style={{ display: 'flex' }}>
           <TextField
@@ -64,97 +79,10 @@ const EditPatch = ({ patch, set_edit_view_active }) => {
           />
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <TextField
-            required
-            label="Datum då märket införskaffades"
-            name='obtained_date'
-            type="date"
-            slotProps={{
-              inputLabel: { shrink: true, }
-            }}
-            value={patch.obtained_date.substring(0, 10)}
-            // onChange={handle_inventory_change}
-            sx={{ margin: '8px', width: '300px' }}
-          />
-          <TextField
-            label="Införskaffat från"
-            name='obtained_from'
-            slotProps={{
-              inputProps: { shrink: true }
-            }}
-            value={patch.obtained_from}
-            // onChange={handle_inventory_change}
-            sx={{ margin: '8px', width: '300px' }}
-          />
-          <TextField
-            required
-            type='number'
-            label="Pris (kr)"
-            name='price'
-            slotProps={{
-              inputProps: { shrink: true }
-            }}
-            value={patch.price}
-            // onChange={handle_inventory_change}
-            sx={{ margin: '8px', width: '300px' }}
-          />
-        </div>
+        <hr style={{marginTop: '16px'}}/>
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={patch.tradable === true ? 'on' : 'off'}
-            // onChange={() => { set_tradeable_checkbox(!tradeable_checkbox) }}
-            />
-          }
-          label="Jag vill markera märket som bytbart"
-          sx={{ margin: '0px', width: '100%' }}
-        />
-
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={patch.sewn_on === true ? 'on' : 'off'}
-            // onChange={() => { set_tradeable_checkbox(!tradeable_checkbox) }}
-            />
-          }
-          label="Jag har sytt på märket"
-          sx={{ margin: '0px', width: '100%' }}
-        />
-
-        {patch.sewn_on ? <div style={{ display: 'flex' }}>
-          <TextField
-            required
-            label="Datum då märket syddes"
-            name='TST'
-            type="date"
-            slotProps={{
-              inputLabel: { shrink: true, }
-            }}
-            value={patch.tst.substring(0, 10)}
-            // onChange={handle_patch_status_change}
-            sx={{ margin: '8px', width: '300px' }}
-          />
-          <TextField
-            required
-            select
-            name='placement'
-            label="Placering av märket"
-            value={patch.placement}
-            // onChange={handle_patch_status_change}
-            sx={{ margin: '8px', width: '300px' }}
-          >
-            {placement_categories.map((p) => (
-              <MenuItem key={p.id} value={p.id}>
-                {p.name}
-              </MenuItem>
-            ))}
-          </TextField>
-        </div> : <></>}
-
-        <Button variant='contained' sx={{ margin: '8px', marginBottom: '100px' }} onClick={handle_submit}>Uppdatera märke</Button>
-      </form>
+        {edit_type === 'inventory' ? <EditPatchInventory patch={patch}/> : <EditPatchStatus patch={patch}/>}
+      </div>
     </div>
   );
 }

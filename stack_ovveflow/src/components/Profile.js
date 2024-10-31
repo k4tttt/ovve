@@ -181,10 +181,6 @@ const Profile = ({ user }) => {
                   <td>Totala märken</td>
                   <td>{user_sewn_patches.length + user_not_sewn_patches.length}</td>
                 </tr>
-                <tr>
-                  <td>Mods</td>
-                  <td>0</td>
-                </tr>
               </tbody>
             </table>
             
