@@ -9,8 +9,11 @@ const Navbar = ({user}) => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
     if (newValue === 0) {
-      navigate('/trade');
+      navigate('/tradelist');
     } else if (newValue === 1) {
+      navigate(`/trade`);
+    }
+    else if (newValue === 2) {
       navigate(`/profile/${user.username}`);
     }
   };
@@ -27,7 +30,8 @@ const Navbar = ({user}) => {
           textColor="inherit"
           indicatorColor="secondary"
         >
-          <Tab label="Byt märken" />
+          <Tab label="Märketplace"/>
+          <Tab label="Byteshandel" />
           <Tab label="Profil" />
         </Tabs>
       </Toolbar>

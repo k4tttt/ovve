@@ -1,22 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import '../App.css';
 
-const PatchRow = ({ username, university, patch_name, patch_maker, patch_price }) => (
-    <div className="patch-row">
-        <h3>{patch_name}</h3>
-        <p><strong>Maker:</strong> {patch_maker}</p>
-        <p><strong>Owner:</strong> {username}</p>
-        <p><strong>University:</strong> {university}</p>
-        <p><strong>Price:</strong> {patch_price} kr</p>
-    </div>
+const TradePost = ({ username, university, patch_name, patch_maker, patch_price }) => (
+  <div className="patch-card">
+    <h3 className="patch-name">{patch_name}</h3>
+    <p><strong>Ägare:</strong> {username}</p>
+    <p><strong>Universitet:</strong> {university}</p>
+    <p><strong>Märkesskapare:</strong> {patch_maker}</p>
+    <p><strong>Inköpspris:</strong> {patch_price} kr</p>
+  </div>
 );
 
-PatchRow.propTypes = {
-    username: PropTypes.string.isRequired,
-    university: PropTypes.string.isRequired,
-    patch_name: PropTypes.string.isRequired,
-    patch_maker: PropTypes.string.isRequired,
-    patch_price: PropTypes.number.isRequired
+TradePost.propTypes = {
+  Ägare: PropTypes.string.isRequired,
+  Universitet: PropTypes.string.isRequired,
+  Märkesnamn: PropTypes.string.isRequired,
+  Märkesskapare: PropTypes.string.isRequired,
+  Inköpspris: PropTypes.number.isRequired
 };
 
-export default PatchRow;
+export default TradePost;
