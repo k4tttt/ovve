@@ -347,15 +347,18 @@ CREATE OR REPLACE FUNCTION insert_trade_offer(
     s_profile_id INT,
     s_profiles_patches INT[]
 ) RETURNS VOID AS $$
+DECLARE
+    t_o_id INT;
 BEGIN
     INSERT INTO trade_offer (sending_profile_id, receiving_profile_id, approved)
-    VALUES (s_profile_id, r_profile_id, NULL);
+    VALUES (s_profile_id, r_profile_id, NULL)
+    RETURNING id INTO t_o_id;
+
+    INSERT INTO trade_offer_patch (trade_offer_id, owning_profile, patch)
+    SELECT t_o_id, r_profile_id, unnest(r_profiles_patches);
     
-    INSERT INTO trade_offer_patch (owning_profile, patch)
-    SELECT r_profile_id, unnest(r_profiles_patches);
-    
-    INSERT INTO trade_offer_patch (owning_profile, patch)
-    SELECT s_profile_id, unnest(s_profiles_patches);
+    INSERT INTO trade_offer_patch (trade_offer_id, owning_profile, patch)
+    SELECT t_o_id, s_profile_id, unnest(s_profiles_patches);
 
 EXCEPTION
     WHEN OTHERS THEN
