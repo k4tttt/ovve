@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import AddTradeOffer from './AddTradeOffer';
 import TradeOfferDetails from './TradeOfferDetails';
+import CounterOffer from './CounterOffer';
 
 function Trade({ user }) {
   const [add_trade_offer_active, set_add_trade_offer_active] = useState(false);
+  const [counter_offer_active, set_counter_offer_active] = useState(false);
   const [trades, set_trades] = useState(null);
   const [trade_offer_patches, set_trade_offer_patches] = useState({});
   const [trade_view_active, set_trade_view_active] = useState(null);
@@ -18,6 +20,7 @@ function Trade({ user }) {
         return response.json();
       })
       .then((data) => {
+        console.log(data.result);
         set_trades(data.result);
         data.result.forEach(trade_offer => {
           fetch(`http://localhost:3001/get-trade-offer-patches?trade_id=${trade_offer.id}`)
@@ -46,11 +49,11 @@ function Trade({ user }) {
   return (
     <div>
       {add_trade_offer_active ? <AddTradeOffer user={user} set_add_trade_offer_active={set_add_trade_offer_active} /> : <></>}
-      {trade_view_active !== null ? <TradeOfferDetails trade_content={trade_view_active} user={user} set_trade_view_active={set_trade_view_active} /> : <></>}
-      <h1>Märketplace</h1>
+      {counter_offer_active ? <CounterOffer user={user} trade_id={counter_offer_active} set_counter_offer_active={set_counter_offer_active} /> : <></>}
+      {trade_view_active !== null ? <TradeOfferDetails trade_content={trade_view_active} user={user} set_trade_view_active={set_trade_view_active} set_counter_offer_active={set_counter_offer_active}/> : <></>}
       <h3>Aktiva byten</h3>
       <div style={{ display: 'flex', marginBottom: '30px' }}>
-        {trades ? (trades.filter(trade => trade.approved === false).map(trade => (
+        {trades ? (trades.filter(trade => trade.approved === null).map(trade => (
           <div className='trade_card' key={trade.id} onClick={() => set_trade_view_active({ trade_offer: trade, trade_offer_patches: trade_offer_patches[trade.id] })}>
             <h4>Byte mellan {trade.sender_name} och {trade.receiver_name}</h4>
             <ul>

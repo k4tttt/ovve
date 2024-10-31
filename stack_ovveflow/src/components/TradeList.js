@@ -3,7 +3,7 @@ import TradePost from './TradePost';
 import { Button, TextField } from '@mui/material';
 import '../App.css';
 
-const TradeList = () => {
+const TradeList = ({ user }) => {
   const [patches, setPatches] = useState([]);
   const [filteredUniversities, setFilteredUniversities] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -21,7 +21,7 @@ const TradeList = () => {
         // Ensure unique patches
         const uniquePatches = Array.from(new Set(data.result.map(patch => JSON.stringify(patch))))
           .map(patch => JSON.parse(patch));
-        setPatches(uniquePatches);
+        setPatches(uniquePatches.filter(patch => patch.username !== user.username));
       })
       .catch((error) => {
         console.error("ERROR when fetching patches: " + error);
