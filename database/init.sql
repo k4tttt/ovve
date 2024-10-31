@@ -333,8 +333,11 @@ JOIN
     ovve_color ON profile.color = ovve_color.id
 JOIN 
     patch ON patch_inventory.patch_id = patch.id
+JOIN 
+    patch_status ON patch_inventory.id = patch_status.patch
 WHERE 
-    patch_inventory.tradable = TRUE;
+    patch_inventory.tradable = TRUE
+    AND patch_inventory.lost_date = '9999-12-31';
 
 
 
