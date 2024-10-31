@@ -40,7 +40,7 @@ function App() {
 
               <Route path="/register" element={<Register />} />
               <Route path="/welcome" element={<Welcome user={cookies.user} />} />
-              <Route path="/tradelist" element={<TradeList />} />
+              <Route path="/tradelist" element={<TradeList user={cookies.user} />} />
             </Routes>
           </div>
         </Router>
