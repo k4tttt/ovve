@@ -36,6 +36,7 @@ const TradeOfferDetails = ({ user, trade_content, set_trade_view_active, set_cou
     } catch (error) {
       console.log('An error occurred:', error.message);
     }
+    set_trade_view_active(null);
   }
 
   const handle_denied_trade = async () => {
@@ -57,6 +58,7 @@ const TradeOfferDetails = ({ user, trade_content, set_trade_view_active, set_cou
     } catch (error) {
       console.log('An error occurred:', error.message);
     }
+    set_trade_view_active(null);
   }
 
   return (

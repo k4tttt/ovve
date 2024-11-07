@@ -90,6 +90,7 @@ const AddTradeOffer = ({ user, set_add_trade_offer_active }) => {
     } catch (error) {
       console.log('An error occurred:', error.message);
     }
+    set_add_trade_offer_active(null);
   };
 
   return (
